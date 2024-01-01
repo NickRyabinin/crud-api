@@ -1,10 +1,17 @@
 CREATE TABLE IF NOT EXISTS users (
-    id MEDIUMINT NOT NULL AUTO_INCREMENT,
-    name varchar(255) NOT NULL,
-    surname varchar(255) NOT NULL,
-    email varchar(255) NOT NULL UNIQUE,
-    password varchar(255) NOT NULL,
-    notes text,
-    created_at timestamp,
-    PRIMARY KEY ( id )
+    id MEDIUMINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    surname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    personal_token VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS books (
+    id MEDIUMINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(1024) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    published_at SMALLINT NOT NULL,
+    created_at TIMESTAMP
 );
