@@ -2,7 +2,9 @@
 
 Посмотреть, что получается, можно [тут](http://php-crud-api.alwaysdata.net/).
 
-# POST / - CREATE
+Пока реализована ознакомительная 0.0.1 версия CRUD API сущности 'book':
+
+### POST / - CREATE
 
   <pre>
   BODY - JSON {
@@ -12,11 +14,11 @@
               }
   </pre>
 
-# GET / - READ
+### GET / - READ
 
   No BODY needed
 
-# PUT / - UPDATE
+### PUT / - UPDATE
 
   <pre>
   BODY - JSON {
@@ -27,7 +29,7 @@
               }
   </pre>
 
-# DELETE / - DELETE
+### DELETE / - DELETE
 
   <pre>
   BODY - JSON {
