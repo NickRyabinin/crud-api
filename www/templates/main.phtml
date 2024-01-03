@@ -9,7 +9,7 @@
 </head>
 
 <body class="bg-green">
-  <p>POST / - CREATE</p>
+  <p>POST /books - CREATE</p>
   <pre>
   BODY - JSON {
                   "title": title,
@@ -17,9 +17,9 @@
                   "published_at": year
               }
   </pre>
-  <p>GET / - READ</p>
+  <p>GET /books - READ</p>
   No BODY needed 
-  <p>PUT / - UPDATE</p>
+  <p>PUT /books - UPDATE</p>
   <pre>
   BODY - JSON {
                   "id": id,
@@ -28,12 +28,13 @@
                   "published_at": year
               }
   </pre>
-  <p>DELETE / - DELETE</p>
+  <p>DELETE /books - DELETE</p>
   <pre>
   BODY - JSON {
                   "id": id
               }
   </pre>
+  <p>Все поля являются обязательными.</p>
 </body>
 
 </html>
