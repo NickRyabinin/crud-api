@@ -4,7 +4,7 @@
 
 Пока реализована ознакомительная 0.0.1 версия CRUD API сущности 'book':
 
-### POST / - CREATE
+#### POST /books - CREATE
 
   <pre>
   BODY - JSON {
@@ -14,11 +14,11 @@
               }
   </pre>
 
-### GET / - READ
+#### GET /books - READ
 
   No BODY needed
 
-### PUT / - UPDATE
+#### PUT /books - UPDATE
 
   <pre>
   BODY - JSON {
@@ -29,7 +29,7 @@
               }
   </pre>
 
-### DELETE / - DELETE
+#### DELETE /books - DELETE
 
   <pre>
   BODY - JSON {
