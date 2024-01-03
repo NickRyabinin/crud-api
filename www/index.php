@@ -2,4 +2,4 @@
 
 namespace web;
 
-require_once __DIR__ . '/templates/main.phtml';
+require_once __DIR__ . '/templates/main.html';
