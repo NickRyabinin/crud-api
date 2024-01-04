@@ -26,9 +26,9 @@ switch ($method) {
     case 'POST':
     // Create
         $data = json_decode(file_get_contents('php://input'), true);
-        $title = $data['title'];
-        $author = $data['author'];
-        $published_at = $data['published_at'];
+        $title = sanitize($data['title']);
+        $author = sanitize($data['author']);
+        $published_at = sanitize($data['published_at']);
 
         $stmt = $pdo->prepare('INSERT INTO books (title, author, published_at) VALUES (?, ?, ?)');
         $stmt->execute([$title, $author, $published_at]);
@@ -39,10 +39,10 @@ switch ($method) {
     case 'PUT':
     // Update
         $data = json_decode(file_get_contents("php://input"), true);
-        $id = $data['id'];
-        $title = $data['title'];
-        $author = $data['author'];
-        $published_at = $data['published_at'];
+        $id = sanitize($data['id']);
+        $title = sanitize($data['title']);
+        $author = sanitize($data['author']);
+        $published_at = sanitize($data['published_at']);
 
         $stmt = $pdo->prepare('UPDATE books SET title=?, author=?, published_at=? WHERE id=?');
         $stmt->execute([$title, $author, $published_at, $id]);
@@ -52,7 +52,7 @@ switch ($method) {
     case 'DELETE':
     // Delete
         $data = json_decode(file_get_contents("php://input"), true);
-        $id = $data['id'];
+        $id = sanitize($data['id']);
 
         $stmt = $pdo->prepare('DELETE FROM books WHERE id=?');
         $stmt->execute([$id]);
@@ -64,4 +64,9 @@ switch ($method) {
         http_response_code(405);
         echo json_encode(['error' => 'Method not allowed']);
     break;
+}
+
+function sanitize($param)
+{
+    return htmlspecialchars(strip_tags($param));
 }
