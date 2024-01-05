@@ -18,25 +18,22 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'GET':
-        // Read
+        // READ
         $stmt = $pdo->query('SELECT * FROM books');
         $booksCount = $pdo->query('SELECT COUNT(*) AS count FROM books')->fetch();
         if ($stmt && $booksCount['count'] > 0) {
             $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             echo json_encode($result);
         } else {
-            echo json_encode(['message' => 'No records found']);
+            echo json_encode(['message' => 'No records']);
         }
         break;
     case 'POST':
-        // Create
+        // CREATE
         $layout = ['title', 'author', 'published_at'];
         $data = json_decode(file_get_contents('php://input'), true) ?? [];
         if (compare($layout, $data)) {
-            $title = sanitize($data['title']);
-            $author = sanitize($data['author']);
-            $published_at = sanitize($data['published_at']);
-
+            extract(array_map(fn ($param) => sanitize(validate($param)), $data));
             $stmt = $pdo->prepare('INSERT INTO books (title, author, published_at) VALUES (?, ?, ?)');
             try {
                 if ($stmt->execute([$title, $author, $published_at])) {
@@ -53,16 +50,17 @@ switch ($method) {
         }
         break;
     case 'PUT':
-        // Update
+        // UPDATE
         $layout = ['id', 'title', 'author', 'published_at'];
         $data = json_decode(file_get_contents("php://input"), true) ?? [];
         if (compare($layout, $data)) {
-            $id = sanitize($data['id']);
-            $title = sanitize($data['title']);
-            $author = sanitize($data['author']);
-            $published_at = sanitize($data['published_at']);
-
-            $stmt = $pdo->prepare('UPDATE books SET title=?, author=?, published_at=? WHERE id=?');
+            extract(array_map(fn ($param) => sanitize(validate($param)), $data));
+            if (checkId($pdo, $id)) {
+                $stmt = $pdo->prepare('UPDATE books SET title=?, author=?, published_at=? WHERE id=?');
+            } else {
+                echo json_encode(['error' => 'No record with such ID']);
+                die();
+            }
             try {
                 if ($stmt->execute([$title, $author, $published_at, $id])) {
                     echo json_encode(['message' => 'Book updated successfully']);
@@ -77,13 +75,18 @@ switch ($method) {
         }
         break;
     case 'DELETE':
-        // Delete
+        // DELETE
         $layout = ['id'];
         $data = json_decode(file_get_contents("php://input"), true) ?? [];
         if (compare($layout, $data)) {
-            $id = sanitize($data['id']);
-
-            $stmt = $pdo->prepare('DELETE FROM books WHERE id=?');
+            extract(array_map(fn ($param) => sanitize(validate($param)), $data));
+            if (checkId($pdo, $id)) {
+                $stmt = $pdo->prepare('DELETE FROM books WHERE id=?');
+            } else {
+                http_response_code(404);
+                echo json_encode(['error' => 'No record with such ID']);
+                die();
+            }
             try {
                 if ($stmt->execute([$id])) {
                     echo json_encode(['message' => 'Book deleted successfully']);
@@ -104,7 +107,15 @@ switch ($method) {
         break;
 }
 
-function sanitize($param)
+function validate(mixed $param): mixed
+{
+    if (is_int($param) || is_string($param)) {
+        return $param;
+    }
+    sendError();
+}
+
+function sanitize(int | string $param): string
 {
     return htmlspecialchars(strip_tags($param));
 }
@@ -114,8 +125,15 @@ function compare(array $layout, array $input): bool
     return (count($layout) == count($input) && array_diff($layout, array_keys($input)) == []);
 }
 
-function sendError()
+function sendError(): void
 {
     http_response_code(400);
     echo json_encode(['error' => 'Invalid input JSON data']);
+    die();
+}
+
+function checkId(\PDO $pdo, mixed $id): bool
+{
+    $query = "SELECT EXISTS (SELECT id FROM books WHERE id = {$id}) AS isExists";
+    return (int)($id) == $id ? (bool)($pdo->query($query)->fetch())['isExists'] : false;
 }
