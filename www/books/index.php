@@ -19,32 +19,14 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case 'GET':
         // READ
-        $stmt = $pdo->query('SELECT * FROM books');
-        $booksCount = $pdo->query('SELECT COUNT(*) AS count FROM books')->fetch();
-        if ($stmt && $booksCount['count'] > 0) {
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            echo json_encode($result);
-        } else {
-            echo json_encode(['message' => 'No records']);
-        }
+        readEntity($pdo);
         break;
     case 'POST':
         // CREATE
         $layout = ['title', 'author', 'published_at'];
-        $data = json_decode(file_get_contents('php://input'), true) ?? [];
+        $data = getData();
         if (compare($layout, $data)) {
-            extract(array_map(fn ($param) => sanitize(validate($param)), $data));
-            $stmt = $pdo->prepare('INSERT INTO books (title, author, published_at) VALUES (?, ?, ?)');
-            try {
-                if ($stmt->execute([$title, $author, $published_at])) {
-                    http_response_code(201);
-                    echo json_encode(['message' => 'Book added successfully']);
-                } else {
-                    sendError();
-                }
-            } catch (\PDOException $e) {
-                sendError();
-            }
+            createEntity($pdo, $data);
         } else {
             sendError();
         }
@@ -52,24 +34,9 @@ switch ($method) {
     case 'PUT':
         // UPDATE
         $layout = ['id', 'title', 'author', 'published_at'];
-        $data = json_decode(file_get_contents("php://input"), true) ?? [];
+        $data = getData();
         if (compare($layout, $data)) {
-            extract(array_map(fn ($param) => sanitize(validate($param)), $data));
-            if (checkId($pdo, $id)) {
-                $stmt = $pdo->prepare('UPDATE books SET title=?, author=?, published_at=? WHERE id=?');
-            } else {
-                echo json_encode(['error' => 'No record with such ID']);
-                die();
-            }
-            try {
-                if ($stmt->execute([$title, $author, $published_at, $id])) {
-                    echo json_encode(['message' => 'Book updated successfully']);
-                } else {
-                    sendError();
-                }
-            } catch (\PDOException $e) {
-                sendError();
-            }
+            updateEntity($pdo, $data);
         } else {
             sendError();
         }
@@ -77,25 +44,9 @@ switch ($method) {
     case 'DELETE':
         // DELETE
         $layout = ['id'];
-        $data = json_decode(file_get_contents("php://input"), true) ?? [];
+        $data = getData();
         if (compare($layout, $data)) {
-            extract(array_map(fn ($param) => sanitize(validate($param)), $data));
-            if (checkId($pdo, $id)) {
-                $stmt = $pdo->prepare('DELETE FROM books WHERE id=?');
-            } else {
-                http_response_code(404);
-                echo json_encode(['error' => 'No record with such ID']);
-                die();
-            }
-            try {
-                if ($stmt->execute([$id])) {
-                    echo json_encode(['message' => 'Book deleted successfully']);
-                } else {
-                    sendError();
-                }
-            } catch (\PDOException $e) {
-                sendError();
-            }
+            deleteEntity($pdo, $data);
         } else {
             sendError();
         }
@@ -136,4 +87,78 @@ function checkId(\PDO $pdo, mixed $id): bool
 {
     $query = "SELECT EXISTS (SELECT id FROM books WHERE id = {$id}) AS isExists";
     return (int)($id) == $id ? (bool)($pdo->query($query)->fetch())['isExists'] : false;
+}
+
+function getData(): array
+{
+    return json_decode(file_get_contents('php://input'), true) ?? [];
+}
+
+function readEntity(\PDO $pdo): void
+{
+    $stmt = $pdo->query('SELECT * FROM books');
+    $booksCount = $pdo->query('SELECT COUNT(*) AS count FROM books')->fetch();
+    if ($stmt && $booksCount['count'] > 0) {
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        echo json_encode($result);
+    } else {
+        echo json_encode(['message' => 'No records']);
+    }
+}
+
+function createEntity(\PDO $pdo, array $data): void
+{
+    extract(array_map(fn ($param) => sanitize(validate($param)), $data));
+    $stmt = $pdo->prepare('INSERT INTO books (title, author, published_at) VALUES (?, ?, ?)');
+    try {
+        if ($stmt->execute([$title, $author, $published_at])) {
+            http_response_code(201);
+            echo json_encode(['message' => 'Book added successfully']);
+        } else {
+            sendError();
+        }
+    } catch (\PDOException $e) {
+        sendError();
+    }
+}
+
+function updateEntity(\PDO $pdo, array $data): void
+{
+    extract(array_map(fn ($param) => sanitize(validate($param)), $data));
+    if (checkId($pdo, $id)) {
+        $stmt = $pdo->prepare('UPDATE books SET title=?, author=?, published_at=? WHERE id=?');
+    } else {
+        echo json_encode(['error' => 'No record with such ID']);
+        die();
+    }
+    try {
+        if ($stmt->execute([$title, $author, $published_at, $id])) {
+            echo json_encode(['message' => 'Book updated successfully']);
+        } else {
+            sendError();
+        }
+    } catch (\PDOException $e) {
+        sendError();
+    }
+}
+
+function deleteEntity(\PDO $pdo, array $data): void
+{
+    extract(array_map(fn ($param) => sanitize(validate($param)), $data));
+    if (checkId($pdo, $id)) {
+        $stmt = $pdo->prepare('DELETE FROM books WHERE id=?');
+    } else {
+        http_response_code(404);
+        echo json_encode(['error' => 'No record with such ID']);
+        die();
+    }
+    try {
+        if ($stmt->execute([$id])) {
+            echo json_encode(['message' => 'Book deleted successfully']);
+        } else {
+            sendError();
+        }
+    } catch (\PDOException $e) {
+        sendError();
+    }
 }
