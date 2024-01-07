@@ -41,6 +41,17 @@ switch ($method) {
             sendError();
         }
         break;
+    case 'PATCH':
+        // UPDATE partial
+        $layout = ['id', 'title', 'author', 'published_at'];
+        $data = getData();
+        $filteredData = array_intersect_key($data, array_flip($layout));
+        if (array_key_exists('id', $filteredData) && count($filteredData) > 1) {
+            partialUpdateEntity($pdo, $filteredData);
+        } else {
+            sendError();
+        }
+        break;
     case 'DELETE':
         // DELETE
         $layout = ['id'];
@@ -139,6 +150,36 @@ function updateEntity(\PDO $pdo, array $data): void
         }
     } catch (\PDOException $e) {
         sendError();
+    }
+}
+
+function partialUpdateEntity(\PDO $pdo, array $data): void
+{
+    $id = sanitize(validate($data['id']));
+    if (checkId($pdo, $id)) {
+        unset($data['id']);
+        $query = 'UPDATE books SET';
+        foreach ($data as $key => $value) {
+            $query = $query . " {$key}=:{$key},";
+        }
+        $query = substr($query, 0, -1) . " WHERE id=:id";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(":id", $id);
+        foreach ($data as $key => $value) {
+            $stmt->bindParam(":{$key}", sanitize(validate($value)));
+        }
+        try {
+            if ($stmt->execute()) {
+                echo json_encode(['message' => 'Book updated successfully']);
+            } else {
+                sendError();
+            }
+        } catch (\PDOException $e) {
+            sendError();
+        }
+    } else {
+        echo json_encode(['error' => 'No record with such ID']);
+        die();
     }
 }
 
