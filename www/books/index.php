@@ -96,8 +96,13 @@ function sendError(): void
 
 function checkId(\PDO $pdo, mixed $id): bool
 {
-    $query = "SELECT EXISTS (SELECT id FROM books WHERE id = {$id}) AS isExists";
-    return (int)($id) == $id ? (bool)($pdo->query($query)->fetch())['isExists'] : false;
+    if ((int)$id == $id) {
+        $query = "SELECT EXISTS (SELECT id FROM books WHERE id = :id) AS isExists";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([':id' => $id]);
+        return (bool)($stmt->fetch())['isExists'];
+    }
+    return false;
 }
 
 function getData(): array
@@ -138,18 +143,18 @@ function updateEntity(\PDO $pdo, array $data): void
     extract(array_map(fn ($param) => sanitize(validate($param)), $data));
     if (checkId($pdo, $id)) {
         $stmt = $pdo->prepare('UPDATE books SET title=?, author=?, published_at=? WHERE id=?');
+        try {
+            if ($stmt->execute([$title, $author, $published_at, $id])) {
+                echo json_encode(['message' => 'Book updated successfully']);
+            } else {
+                sendError();
+            }
+        } catch (\PDOException $e) {
+            sendError();
+        }
     } else {
         echo json_encode(['error' => 'No record with such ID']);
         die();
-    }
-    try {
-        if ($stmt->execute([$title, $author, $published_at, $id])) {
-            echo json_encode(['message' => 'Book updated successfully']);
-        } else {
-            sendError();
-        }
-    } catch (\PDOException $e) {
-        sendError();
     }
 }
 
@@ -160,13 +165,13 @@ function partialUpdateEntity(\PDO $pdo, array $data): void
         unset($data['id']);
         $query = 'UPDATE books SET';
         foreach ($data as $key => $value) {
-            $query = $query . " {$key}=:{$key},";
+            $query = $query . " {$key} = :{$key},";
         }
-        $query = substr($query, 0, -1) . " WHERE id=:id";
+        $query = substr($query, 0, -1) . " WHERE id = :id";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(":id", $id);
         foreach ($data as $key => $value) {
-            $stmt->bindParam(":{$key}", sanitize(validate($value)));
+            $stmt->bindValue(":{$key}", sanitize(validate($value)));
         }
         try {
             if ($stmt->execute()) {
@@ -188,18 +193,18 @@ function deleteEntity(\PDO $pdo, array $data): void
     extract(array_map(fn ($param) => sanitize(validate($param)), $data));
     if (checkId($pdo, $id)) {
         $stmt = $pdo->prepare('DELETE FROM books WHERE id=?');
+        try {
+            if ($stmt->execute([$id])) {
+                echo json_encode(['message' => 'Book deleted successfully']);
+            } else {
+                sendError();
+            }
+        } catch (\PDOException $e) {
+            sendError();
+        }
     } else {
         http_response_code(404);
         echo json_encode(['error' => 'No record with such ID']);
         die();
-    }
-    try {
-        if ($stmt->execute([$id])) {
-            echo json_encode(['message' => 'Book deleted successfully']);
-        } else {
-            sendError();
-        }
-    } catch (\PDOException $e) {
-        sendError();
     }
 }
