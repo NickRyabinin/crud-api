@@ -17,6 +17,7 @@
                   "published_at": year
               }
   </pre>
+  <p>Все поля являются обязательными.</p>
   <p>GET /books/ - READ</p>
   No BODY needed 
   <p>PUT /books/ - UPDATE</p>
@@ -28,13 +29,25 @@
                   "published_at": year
               }
   </pre>
+  <p>Все поля являются обязательными.</p>
+  <p>PATCH /books/ - UPDATE partial</p>
+  <pre>
+  BODY - JSON {
+                  "id": id,
+                  "title": title,
+                  "author": author,
+                  "published_at": year
+              }
+  </pre>
+  <p>Поле "id" является обязательным.
+    Остальные поля - должно присутствовать минимум одно.</p>
   <p>DELETE /books/ - DELETE</p>
   <pre>
   BODY - JSON {
                   "id": id
               }
   </pre>
-  <p>Все поля являются обязательными.</p>
+  <p>Поле "id" является обязательным.</p>
 </body>
 
 </html>
