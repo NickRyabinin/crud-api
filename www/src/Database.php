@@ -2,15 +2,21 @@
 
 namespace app;
 
+use PDO;
+
 final class Database
 {
     private static ?Database $connection = null;
 
-    protected function __construct()
+    private function __construct()
     {
     }
 
-    public function connect(string $dbType)
+    private function __clone()
+    {
+    }
+
+    public function connect(string $dbType): PDO
     {
         $databaseUrl = parse_url((string) getenv('DATABASE_URL'));
         $username = $databaseUrl['user'] ?? '';
@@ -31,7 +37,7 @@ final class Database
         return $pdo;
     }
 
-    public function migrate(\PDO $pdo, string $migrationPath)
+    public function migrate(\PDO $pdo, string $migrationPath): void
     {
         try {
             $migration = file_get_contents($migrationPath);
@@ -42,13 +48,12 @@ final class Database
         } catch (\PDOException $e) {
             die("Database migration failed: " . $e->getMessage());
         }
-        return $pdo;
     }
 
-    public static function get()
+    public static function get(): Database
     {
         if (static::$connection === null) {
-            static::$connection = new self();
+            static::$connection = new static();
         }
         return static::$connection;
     }
