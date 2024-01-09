@@ -8,6 +8,7 @@ use app\Database;
 
 const DB_TYPE = 'mysql';
 const MIGRATION_PATH = __DIR__ . "/../migration.sql";
+$entity = 'book';
 
 $pdo = Database::get()->connect(DB_TYPE);
 Database::get()->migrate($pdo, MIGRATION_PATH);
@@ -19,14 +20,14 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case 'GET':
         // READ
-        readEntity($pdo);
+        readEntity($pdo, $entity);
         break;
     case 'POST':
         // CREATE
         $layout = ['title', 'author', 'published_at'];
         $data = getData();
         if (compare($layout, $data)) {
-            createEntity($pdo, $data);
+            createEntity($pdo, $data, $entity);
         } else {
             sendError();
         }
@@ -36,7 +37,7 @@ switch ($method) {
         $layout = ['id', 'title', 'author', 'published_at'];
         $data = getData();
         if (compare($layout, $data)) {
-            updateEntity($pdo, $data);
+            updateEntity($pdo, $data, $entity);
         } else {
             sendError();
         }
@@ -47,20 +48,14 @@ switch ($method) {
         $data = getData();
         $filteredData = array_intersect_key($data, array_flip($layout));
         if (array_key_exists('id', $filteredData) && count($filteredData) > 1) {
-            partialUpdateEntity($pdo, $filteredData);
+            partialUpdateEntity($pdo, $filteredData, $entity);
         } else {
             sendError();
         }
         break;
     case 'DELETE':
         // DELETE
-        $layout = ['id'];
-        $data = getData();
-        if (compare($layout, $data)) {
-            deleteEntity($pdo, $data);
-        } else {
-            sendError();
-        }
+        deleteEntity($pdo, $entity);
         break;
     default:
         // Invalid method
@@ -90,19 +85,25 @@ function compare(array $layout, array $input): bool
 function sendError(): void
 {
     http_response_code(400);
-    echo json_encode(['error' => 'Invalid input JSON data']);
+    echo json_encode(['error' => 'Invalid input data']);
     die();
 }
 
-function checkId(\PDO $pdo, mixed $id): bool
+function checkId(\PDO $pdo, mixed $id, string $entity): bool
 {
-    if ((int)$id == $id) {
-        $query = "SELECT EXISTS (SELECT id FROM books WHERE id = :id) AS isExists";
+    if (is_numeric($id) && $id > 0 && floor($id) == $id) {
+        $query = "SELECT EXISTS (SELECT id FROM {$entity}s WHERE id = :id) AS isExists";
         $stmt = $pdo->prepare($query);
         $stmt->execute([':id' => $id]);
-        return (bool)($stmt->fetch())['isExists'];
+        if (($stmt->fetch())['isExists'] === 0) {
+            http_response_code(404);
+            echo json_encode(['error' => 'No record with such ID']);
+            return false;
+        } else {
+            return true;
+        }
     }
-    return false;
+    sendError();
 }
 
 function getData(): array
@@ -110,11 +111,23 @@ function getData(): array
     return json_decode(file_get_contents('php://input'), true) ?? [];
 }
 
-function readEntity(\PDO $pdo): void
+function getIdFromQuery(): mixed
 {
-    $stmt = $pdo->query('SELECT * FROM books');
-    $booksCount = $pdo->query('SELECT COUNT(*) AS count FROM books')->fetch();
-    if ($stmt && $booksCount['count'] > 0) {
+    if (isset($_SERVER['QUERY_STRING'])) {
+        parse_str($_SERVER['QUERY_STRING'], $queryParams);
+        $queryParams = array_change_key_case($queryParams, CASE_LOWER);
+        if (isset($queryParams['id'])) {
+            return sanitize(validate($queryParams['id']));
+        }
+    }
+    sendError();
+}
+
+function readEntity(\PDO $pdo, string $entity): void
+{
+    $stmt = $pdo->query("SELECT * FROM {$entity}s");
+    $entityCount = $pdo->query("SELECT COUNT(*) AS count FROM {$entity}s")->fetch();
+    if ($stmt && $entityCount['count'] > 0) {
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         echo json_encode($result);
     } else {
@@ -122,14 +135,14 @@ function readEntity(\PDO $pdo): void
     }
 }
 
-function createEntity(\PDO $pdo, array $data): void
+function createEntity(\PDO $pdo, array $data, string $entity): void
 {
     extract(array_map(fn ($param) => sanitize(validate($param)), $data));
-    $stmt = $pdo->prepare('INSERT INTO books (title, author, published_at) VALUES (?, ?, ?)');
+    $stmt = $pdo->prepare("INSERT INTO {$entity}s (title, author, published_at) VALUES (?, ?, ?)");
     try {
         if ($stmt->execute([$title, $author, $published_at])) {
             http_response_code(201);
-            echo json_encode(['message' => 'Book added successfully']);
+            echo json_encode(['message' => "Done, {$entity} added successfully"]);
         } else {
             sendError();
         }
@@ -138,32 +151,30 @@ function createEntity(\PDO $pdo, array $data): void
     }
 }
 
-function updateEntity(\PDO $pdo, array $data): void
+function updateEntity(\PDO $pdo, array $data, string $entity): void
 {
     extract(array_map(fn ($param) => sanitize(validate($param)), $data));
-    if (checkId($pdo, $id)) {
-        $stmt = $pdo->prepare('UPDATE books SET title=?, author=?, published_at=? WHERE id=?');
+    if (checkId($pdo, $id, $entity)) {
+        $stmt = $pdo->prepare("UPDATE {$entity}s SET title=?, author=?, published_at=? WHERE id=?");
         try {
             if ($stmt->execute([$title, $author, $published_at, $id])) {
-                echo json_encode(['message' => 'Book updated successfully']);
+                echo json_encode(['message' => "Done, {$entity} updated successfully"]);
             } else {
                 sendError();
             }
         } catch (\PDOException $e) {
             sendError();
         }
-    } else {
-        echo json_encode(['error' => 'No record with such ID']);
-        die();
     }
+    die();
 }
 
-function partialUpdateEntity(\PDO $pdo, array $data): void
+function partialUpdateEntity(\PDO $pdo, array $data, string $entity): void
 {
     $id = sanitize(validate($data['id']));
-    if (checkId($pdo, $id)) {
+    if (checkId($pdo, $id, $entity)) {
         unset($data['id']);
-        $query = 'UPDATE books SET';
+        $query = "UPDATE {$entity}s SET";
         foreach ($data as $key => $value) {
             $query = $query . " {$key} = :{$key},";
         }
@@ -175,36 +186,31 @@ function partialUpdateEntity(\PDO $pdo, array $data): void
         }
         try {
             if ($stmt->execute()) {
-                echo json_encode(['message' => 'Book updated successfully']);
+                echo json_encode(['message' => "Done, {$entity} updated successfully"]);
             } else {
                 sendError();
             }
         } catch (\PDOException $e) {
             sendError();
         }
-    } else {
-        echo json_encode(['error' => 'No record with such ID']);
-        die();
     }
+    die();
 }
 
-function deleteEntity(\PDO $pdo, array $data): void
+function deleteEntity(\PDO $pdo, string $entity): void
 {
-    extract(array_map(fn ($param) => sanitize(validate($param)), $data));
-    if (checkId($pdo, $id)) {
-        $stmt = $pdo->prepare('DELETE FROM books WHERE id=?');
+    $id = getIdFromQuery();
+    if (checkId($pdo, $id, $entity)) {
+        $stmt = $pdo->prepare("DELETE FROM {$entity}s WHERE id=?");
         try {
             if ($stmt->execute([$id])) {
-                echo json_encode(['message' => 'Book deleted successfully']);
+                echo json_encode(['message' => "Done, {$entity} deleted successfully"]);
             } else {
                 sendError();
             }
         } catch (\PDOException $e) {
             sendError();
         }
-    } else {
-        http_response_code(404);
-        echo json_encode(['error' => 'No record with such ID']);
-        die();
     }
+    die();
 }
