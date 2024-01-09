@@ -9,7 +9,7 @@
 </head>
 
 <body class="bg-green text-white">
-  <p>POST /books/ - CREATE</p>
+  <p><h4>POST /books/</h4> - CREATE</p>
   <pre>
   BODY - JSON {
                   "title": title,
@@ -18,9 +18,9 @@
               }
   </pre>
   <p>Все поля являются обязательными.</p>
-  <p>GET /books/ - READ</p>
+  <p><h4>GET /books/</h4> - READ</p>
   No BODY needed 
-  <p>PUT /books/ - UPDATE</p>
+  <p><h4>PUT /books/</h4> - UPDATE</p>
   <pre>
   BODY - JSON {
                   "id": id,
@@ -30,7 +30,7 @@
               }
   </pre>
   <p>Все поля являются обязательными.</p>
-  <p>PATCH /books/ - UPDATE partial</p>
+  <p><h4>PATCH /books/</h4> - UPDATE partial</p>
   <pre>
   BODY - JSON {
                   "id": id,
@@ -41,13 +41,9 @@
   </pre>
   <p>Поле "id" является обязательным.
     Остальные поля - должно присутствовать минимум одно.</p>
-  <p>DELETE /books/ - DELETE</p>
-  <pre>
-  BODY - JSON {
-                  "id": id
-              }
-  </pre>
-  <p>Поле "id" является обязательным.</p>
+  <p><h4>DELETE /books/?id=<span class="text-italic">{id}</span></h4> - DELETE</p>
+  No BODY needed
+  <p>Параметр "id" является обязательным.</p>
 </body>
 
 </html>

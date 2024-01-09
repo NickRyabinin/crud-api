@@ -9,3 +9,11 @@
 .text-white {
   color: white;
 }
+
+.text-italic {
+  font-style: italic;
+}
+
+h4 {
+  display: inline;
+}
