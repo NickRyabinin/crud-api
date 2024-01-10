@@ -20,9 +20,11 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case 'GET':
         // READ
-        if (isset($_SERVER['QUERY_STRING'])) {
+        if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] !== '') {
+            // READ single id
             readEntitySingle($pdo, $entity);
         } else {
+            // READ all
             readEntity($pdo, $entity);
         }
         break;
@@ -95,7 +97,7 @@ function sendError(): void
 
 function checkId(\PDO $pdo, mixed $id, string $entity): bool
 {
-    if (is_numeric($id) && $id > 0 && floor($id) == $id) {
+    if (is_numeric($id) && $id >= 0 && floor($id) == $id) {
         $query = "SELECT EXISTS (SELECT id FROM {$entity}s WHERE id = :id) AS isExists";
         $stmt = $pdo->prepare($query);
         $stmt->execute([':id' => $id]);
