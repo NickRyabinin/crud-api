@@ -20,7 +20,11 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case 'GET':
         // READ
-        readEntity($pdo, $entity);
+        if (isset($_SERVER['QUERY_STRING'])) {
+            readEntitySingle($pdo, $entity);
+        } else {
+            readEntity($pdo, $entity);
+        }
         break;
     case 'POST':
         // CREATE
@@ -133,6 +137,23 @@ function readEntity(\PDO $pdo, string $entity): void
     } else {
         echo json_encode(['message' => 'No records']);
     }
+}
+
+function readEntitySingle(\PDO $pdo, string $entity): void
+{
+    $id = getIdFromQuery();
+    if (checkId($pdo, $id, $entity)) {
+        $query = "SELECT * FROM {$entity}s WHERE id = :id";
+        $stmt = $pdo->prepare($query);
+        try {
+            $stmt->execute([':id' => $id]);
+            $result = $stmt->fetch();
+            echo json_encode($result);
+        } catch (\PDOException $e) {
+            sendError();
+        }
+    }
+    die();
 }
 
 function createEntity(\PDO $pdo, array $data, string $entity): void
