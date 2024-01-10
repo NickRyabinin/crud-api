@@ -16,7 +16,11 @@
 
 Все поля являются обязательными.
 
-#### GET /books/ - READ
+#### GET /books/ - READ ALL
+
+  No BODY needed
+
+#### GET /books/id=*{id}* - READ single id
 
   No BODY needed
 
