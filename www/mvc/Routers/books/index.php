@@ -16,8 +16,8 @@ $entity = 'book';
 $pdo = Database::get()->connect(DB_TYPE);
 Database::get()->migrate($pdo, MIGRATION_PATH);
 
-$model = new BookModel();
-$controller = new BookController();
+$model = new BookModel($pdo);
+$controller = new BookController($model);
 $view = new BookView();
 
 $method = $_SERVER['REQUEST_METHOD'];
