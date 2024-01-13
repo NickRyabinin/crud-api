@@ -1,4 +1,4 @@
-## Планируется, что тут будет CRUD API на PHP
+## CRUD API на  чистом PHP
 
 Посмотреть, что получается, можно [тут](http://php-crud-api.alwaysdata.net/).
 
@@ -20,7 +20,7 @@
 
   No BODY needed
 
-#### GET /books/id=*{id}* - READ single id
+#### GET /books/*{id}* - READ single id
 
   No BODY needed
 
@@ -51,7 +51,7 @@
 Поле "id" является обязательным.
 Остальные поля - должно присутствовать минимум одно.
 
-#### DELETE /books/id=*{id}* - DELETE
+#### DELETE /books/*{id}* - DELETE
 
   No BODY needed
 
