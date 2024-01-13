@@ -11,7 +11,6 @@ use app\Database;
 
 const DB_TYPE = 'mysql';
 const MIGRATION_PATH = __DIR__ . "/../../../migration.sql";
-$entity = 'book';
 
 $pdo = Database::get()->connect(DB_TYPE);
 Database::get()->migrate($pdo, MIGRATION_PATH);
