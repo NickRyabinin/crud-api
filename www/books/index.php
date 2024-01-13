@@ -17,15 +17,15 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
 $method = $_SERVER['REQUEST_METHOD'];
-$resource = isset($_SERVER['PATH_INFO']) ? explode('/', trim($_SERVER['PATH_INFO'], '/')) : [];
+$resource = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 
 switch ($method) {
     case 'GET':
         // READ
-        if (empty($resource[0])) {
+        if (empty($resource[1])) {
             readEntity($pdo, $entity);
         } else {
-            readEntitySingle($pdo, $entity, $resource[0]);
+            readEntitySingle($pdo, $entity, $resource[1]);
         }
         break;
     case 'POST':
@@ -61,7 +61,7 @@ switch ($method) {
         break;
     case 'DELETE':
         // DELETE
-        deleteEntity($pdo, $entity, $resource[0] ?? '');
+        deleteEntity($pdo, $entity, $resource[1] ?? '');
         break;
     default:
         // Invalid method
