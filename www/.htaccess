@@ -1,2 +1,2 @@
 RewriteEngine On
-RewriteRule ^books/([0-9]+)$ /books/index.php/$1 [L]
+RewriteRule ^books/([0-9a-zA-Z]+)$ /books/index.php/$1 [L]
