@@ -14,18 +14,18 @@ $pdo = Database::get()->connect(DB_TYPE);
 Database::get()->migrate($pdo, MIGRATION_PATH);
 
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 $method = $_SERVER['REQUEST_METHOD'];
+$resource = isset($_SERVER['PATH_INFO']) ? explode('/', trim($_SERVER['PATH_INFO'], '/')) : [];
 
 switch ($method) {
     case 'GET':
         // READ
-        if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] !== '') {
-            // READ single id
-            readEntitySingle($pdo, $entity);
-        } else {
-            // READ all
+        if (empty($resource[0])) {
             readEntity($pdo, $entity);
+        } else {
+            readEntitySingle($pdo, $entity, $resource[0]);
         }
         break;
     case 'POST':
@@ -61,7 +61,7 @@ switch ($method) {
         break;
     case 'DELETE':
         // DELETE
-        deleteEntity($pdo, $entity);
+        deleteEntity($pdo, $entity, $resource[0] ?? '');
         break;
     default:
         // Invalid method
@@ -117,18 +117,6 @@ function getData(): array
     return json_decode(file_get_contents('php://input'), true) ?? [];
 }
 
-function getIdFromQuery(): mixed
-{
-    if (isset($_SERVER['QUERY_STRING'])) {
-        parse_str($_SERVER['QUERY_STRING'], $queryParams);
-        $queryParams = array_change_key_case($queryParams, CASE_LOWER);
-        if (isset($queryParams['id'])) {
-            return sanitize(validate($queryParams['id']));
-        }
-    }
-    sendError();
-}
-
 function readEntity(\PDO $pdo, string $entity): void
 {
     $stmt = $pdo->query("SELECT * FROM {$entity}s");
@@ -141,9 +129,9 @@ function readEntity(\PDO $pdo, string $entity): void
     }
 }
 
-function readEntitySingle(\PDO $pdo, string $entity): void
+function readEntitySingle(\PDO $pdo, string $entity, string $id): void
 {
-    $id = getIdFromQuery();
+    $id = sanitize(validate($id));
     if (checkId($pdo, $id, $entity)) {
         $query = "SELECT * FROM {$entity}s WHERE id = :id";
         $stmt = $pdo->prepare($query);
@@ -220,9 +208,9 @@ function partialUpdateEntity(\PDO $pdo, array $data, string $entity): void
     die();
 }
 
-function deleteEntity(\PDO $pdo, string $entity): void
+function deleteEntity(\PDO $pdo, string $entity, string $id): void
 {
-    $id = getIdFromQuery();
+    $id = sanitize(validate($id));
     if (checkId($pdo, $id, $entity)) {
         $stmt = $pdo->prepare("DELETE FROM {$entity}s WHERE id=?");
         try {
