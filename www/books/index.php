@@ -9,6 +9,7 @@ use app\Database;
 const DB_TYPE = 'mysql';
 const MIGRATION_PATH = __DIR__ . "/../migration.sql";
 $entity = 'book';
+$layout = ['title', 'author', 'published_at'];
 
 $pdo = Database::get()->connect(DB_TYPE);
 Database::get()->migrate($pdo, MIGRATION_PATH);
@@ -18,54 +19,51 @@ header('Access-Control-Allow-Origin: *');
 
 $method = $_SERVER['REQUEST_METHOD'];
 $resource = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+$id = empty($resource[1]) ? '' : sanitize(validate($resource[1]));
+$data = getData();
 
 switch ($method) {
     case 'GET':
         // READ
-        if (empty($resource[1])) {
+        if ($id === '') {
             readEntity($pdo, $entity);
         } else {
-            readEntitySingle($pdo, $entity, $resource[1]);
+            readEntitySingle($pdo, $entity, $id);
         }
         break;
     case 'POST':
         // CREATE
-        $layout = ['title', 'author', 'published_at'];
-        $data = getData();
-        if (compare($layout, $data)) {
-            createEntity($pdo, $data, $entity);
+        if ($id === '' && compare($layout, $data)) {
+            createEntity($pdo, $entity, $data);
         } else {
             sendError();
         }
         break;
     case 'PUT':
         // UPDATE
-        $layout = ['id', 'title', 'author', 'published_at'];
-        $data = getData();
         if (compare($layout, $data)) {
-            updateEntity($pdo, $data, $entity);
+            updateEntity($pdo, $entity, $data, $id);
         } else {
             sendError();
         }
         break;
     case 'PATCH':
         // UPDATE partial
-        $layout = ['id', 'title', 'author', 'published_at'];
-        $data = getData();
         $filteredData = array_intersect_key($data, array_flip($layout));
-        if (array_key_exists('id', $filteredData) && count($filteredData) > 1) {
-            partialUpdateEntity($pdo, $filteredData, $entity);
+        if ($id !== '' && count($filteredData) > 0) {
+            partialUpdateEntity($pdo, $entity, $filteredData, $id);
         } else {
             sendError();
         }
         break;
     case 'DELETE':
         // DELETE
-        deleteEntity($pdo, $entity, $resource[1] ?? '');
+        deleteEntity($pdo, $entity, $id);
         break;
     default:
         // Invalid method
         http_response_code(405);
+        header('Allow: POST, GET, PUT, PATCH, DELETE');
         echo json_encode(['error' => 'Method not allowed']);
         break;
 }
@@ -95,7 +93,7 @@ function sendError(): void
     die();
 }
 
-function checkId(\PDO $pdo, mixed $id, string $entity): bool
+function checkId(\PDO $pdo, string $entity, mixed $id): bool
 {
     if (is_numeric($id) && $id >= 0 && floor($id) == $id) {
         $query = "SELECT EXISTS (SELECT id FROM {$entity}s WHERE id = :id) AS isExists";
@@ -131,8 +129,7 @@ function readEntity(\PDO $pdo, string $entity): void
 
 function readEntitySingle(\PDO $pdo, string $entity, string $id): void
 {
-    $id = sanitize(validate($id));
-    if (checkId($pdo, $id, $entity)) {
+    if (checkId($pdo, $entity, $id)) {
         $query = "SELECT * FROM {$entity}s WHERE id = :id";
         $stmt = $pdo->prepare($query);
         try {
@@ -143,10 +140,9 @@ function readEntitySingle(\PDO $pdo, string $entity, string $id): void
             sendError();
         }
     }
-    die();
 }
 
-function createEntity(\PDO $pdo, array $data, string $entity): void
+function createEntity(\PDO $pdo, string $entity, array $data): void
 {
     extract(array_map(fn ($param) => sanitize(validate($param)), $data));
     $stmt = $pdo->prepare("INSERT INTO {$entity}s (title, author, published_at) VALUES (?, ?, ?)");
@@ -162,10 +158,10 @@ function createEntity(\PDO $pdo, array $data, string $entity): void
     }
 }
 
-function updateEntity(\PDO $pdo, array $data, string $entity): void
+function updateEntity(\PDO $pdo, string $entity, array $data, string $id): void
 {
     extract(array_map(fn ($param) => sanitize(validate($param)), $data));
-    if (checkId($pdo, $id, $entity)) {
+    if (checkId($pdo, $entity, $id)) {
         $stmt = $pdo->prepare("UPDATE {$entity}s SET title=?, author=?, published_at=? WHERE id=?");
         try {
             if ($stmt->execute([$title, $author, $published_at, $id])) {
@@ -177,14 +173,11 @@ function updateEntity(\PDO $pdo, array $data, string $entity): void
             sendError();
         }
     }
-    die();
 }
 
-function partialUpdateEntity(\PDO $pdo, array $data, string $entity): void
+function partialUpdateEntity(\PDO $pdo, string $entity, array $data, string $id): void
 {
-    $id = sanitize(validate($data['id']));
-    if (checkId($pdo, $id, $entity)) {
-        unset($data['id']);
+    if (checkId($pdo, $entity, $id)) {
         $query = "UPDATE {$entity}s SET";
         foreach ($data as $key => $value) {
             $query = $query . " {$key} = :{$key},";
@@ -205,13 +198,11 @@ function partialUpdateEntity(\PDO $pdo, array $data, string $entity): void
             sendError();
         }
     }
-    die();
 }
 
 function deleteEntity(\PDO $pdo, string $entity, string $id): void
 {
-    $id = sanitize(validate($id));
-    if (checkId($pdo, $id, $entity)) {
+    if (checkId($pdo, $entity, $id)) {
         $stmt = $pdo->prepare("DELETE FROM {$entity}s WHERE id=?");
         try {
             if ($stmt->execute([$id])) {
@@ -223,5 +214,4 @@ function deleteEntity(\PDO $pdo, string $entity, string $id): void
             sendError();
         }
     }
-    die();
 }
