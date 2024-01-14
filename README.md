@@ -2,7 +2,7 @@
 
 Посмотреть, что получается, можно [тут](http://php-crud-api.alwaysdata.net/).
 
-Пока реализована MVP версия CRUD API сущности 'book':
+Пока реализована MVP REST-like версия CRUD API сущности 'book':
 
 #### POST /books/ - CREATE
 
@@ -14,7 +14,7 @@
               }
   </pre>
 
-Все поля являются обязательными.
+Все поля в BODY являются обязательными.
 
 #### GET /books/ - READ ALL
 
@@ -24,32 +24,31 @@
 
   No BODY needed
 
-#### PUT /books/ - UPDATE
+#### PUT /books/*{id}* - UPDATE
 
   <pre>
   BODY - JSON {
-                  "id": id,
                   "title": title,
                   "author": author,
                   "published_at": year
               }
   </pre>
 
-Все поля являются обязательными.
+Параметр "id" является обязательным.
+Все поля в BODY являются обязательными.
 
-#### PATCH /books/ - UPDATE partial
+#### PATCH /books/*{id}* - UPDATE partial
 
   <pre>
   BODY - JSON {
-                  "id": id,
                   "title": title,
                   "author": author,
                   "published_at": year
               }
   </pre>
 
-Поле "id" является обязательным.
-Остальные поля - должно присутствовать минимум одно.
+Параметр "id" является обязательным.
+В BODY должно присутствовать минимум одно поле.
 
 #### DELETE /books/*{id}* - DELETE
 
