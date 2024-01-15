@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="Assets/Styles/style.css">
+  <title>PHP CRUD API</title>
+</head>
+
+<body class="bg-green text-white">
+  <p><h4>POST /books/</h4> - CREATE</p>
+  <pre>
+  BODY - JSON {
+                  "title": title,
+                  "author": author,
+                  "published_at": year
+              }
+  </pre>
+  <p>Все поля в BODY являются обязательными.</p>
+  <p><h4>GET /books/</h4> - READ all</p>
+  No BODY needed
+  <p><h4>GET /books/<span class="text-italic">{id}</span></h4> - READ single id</p>
+  No BODY needed 
+  <p><h4>PUT /books/<span class="text-italic">{id}</span></h4> - UPDATE</p>
+  <pre>
+  BODY - JSON {
+                  "title": title,
+                  "author": author,
+                  "published_at": year
+              }
+  </pre>
+  <p>Параметр "id" является обязательным.
+    Все поля в BODY являются обязательными.</p>
+  <p><h4>PATCH /books/<span class="text-italic">{id}</span></h4> - UPDATE partial</p>
+  <pre>
+  BODY - JSON {
+                  "title": title,
+                  "author": author,
+                  "published_at": year
+              }
+  </pre>
+  <p>Параметр "id" является обязательным.
+    В BODY должно присутствовать минимум одно поле.</p>
+  <p><h4>DELETE /books/<span class="text-italic">{id}</span></h4> - DELETE</p>
+  No BODY needed
+  <p>Параметр "id" является обязательным.</p>
+</body>
+
+</html>

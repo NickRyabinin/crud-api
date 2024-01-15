@@ -1,6 +1,6 @@
 <?php
 
-namespace books;
+namespace App;
 
 class BookView
 {
