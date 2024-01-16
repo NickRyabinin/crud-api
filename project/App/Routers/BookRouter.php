@@ -3,30 +3,27 @@
 namespace App\Routers;
 
 use App\Core\Container;
+use App\Core\Helper;
 
 class BookRouter
 {
     private $container;
+    private $helper;
 
     public function __construct(Container $container)
     {
         $this->container = $container;
+        $this->helper = $this->container->get('helper');
     }
 
-    public function route($method, $request)
+    public function route()
     {
-        $resource = $request[0];
-        $controllerName = htmlspecialchars(substr($resource, 0, -1)) . 'Controller';
-
-        if ($this->container->get($controllerName) !== false) {
-            $controller = $this->container->get($controllerName);
-        } else {
-            die();
-        }
+        $controller = $this->getController();
+        $method = $this->helper->getHttpMethod();
 
         switch ($method) {
             case 'GET':
-                empty($request[1]) ? $controller->readAll() : $controller->read();
+                $controller->read();
                 break;
             case 'POST':
                 $controller->create();
@@ -42,6 +39,18 @@ class BookRouter
                 // Invalid method
                 $controller->invalidMethod();
                 break;
+        }
+    }
+
+    private function getController()
+    {
+        $resource = $this->helper->getResource();
+        $controllerName = $this->helper->sanitize(substr($resource, 0, -1)) . 'Controller';
+
+        if ($this->container->get($controllerName) !== false) {
+            return $this->container->get($controllerName);
+        } else {
+            die("I'm dying...");
         }
     }
 }
