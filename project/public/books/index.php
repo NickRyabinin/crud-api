@@ -7,12 +7,12 @@ require_once __DIR__ . '/../../App/Models/Book.php';
 require_once __DIR__ . '/../../App/Controllers/BookController.php';
 require_once __DIR__ . '/../../App/Views/BookView.php';
 
-use App\Container;
-use App\Database;
-use App\BookRouter;
-use App\Book;
-use App\BookController;
-use App\BookView;
+use App\Core\Container;
+use App\Core\Database;
+use App\Routers\BookRouter;
+use App\Models\Book;
+use App\Controllers\BookController;
+use App\Views\BookView;
 
 const DB_TYPE = 'mysql';
 const MIGRATION_PATH = __DIR__ . "/../../App/Database/Migrations/migration.sql";

@@ -1,6 +1,9 @@
 <?php
 
-namespace App;
+namespace App\Controllers;
+
+use App\Models\Book;
+use App\Views\BookView;
 
 class BookController
 {

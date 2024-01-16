@@ -1,6 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Routers;
+
+use App\Core\Container;
 
 class BookRouter
 {
