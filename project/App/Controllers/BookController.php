@@ -4,30 +4,71 @@ namespace App\Controllers;
 
 use App\Models\Book;
 use App\Views\BookView;
+use App\Core\Helper;
 
 class BookController
 {
     private $book;
     private $view;
+    private $helper;
 
-    public function __construct(Book $book, BookView $view)
+    public function __construct(Book $book, BookView $view, Helper $helper)
     {
         $this->book = $book;
         $this->view = $view;
+        $this->helper = $helper;
     }
 
-    public function readAll()
+    public function read()
     {
-        $message = $this->book->getAll();
-        $responseCode = '200';
-        $data = ['response_code' => $responseCode, 'message' => $message];
-        $this->view->send($data);
+        $id = $this->helper->getId();
+        if ($id === '') {
+            $message = $this->book->getAll();
+            if ($message === []) {
+                $responseCode = '404';
+                $message = ['error' => 'No records'];
+            } else {
+                $responseCode = '200';
+            }
+        } elseif ($id === false) {
+            $responseCode = '400';
+            $message = ['error' => 'Invalid ID'];
+        } else {
+            $message = $this->book->get($id);
+            if ($message === false) {
+                $responseCode = '404';
+                $message = ['error' => 'No record with such ID'];
+            } else {
+                $responseCode = '200';
+            }
+        }
+        $this->view->send($responseCode, $message);
+    }
+
+    public function delete()
+    {
+        $id = $this->helper->getId();
+        if ($id === '' || $id === false) {
+            $responseCode = '400';
+            $message = ['error' => 'Invalid ID'];
+        } else {
+            $message = $this->book->destroy($id);
+            if ($message === false) {
+                $responseCode = '404';
+                $message = ['error' => 'No record with such ID'];
+            } else {
+                $responseCode = '200';
+                $message = ["Done, book deleted successfully"];
+            }
+        }
+        $this->view->send($responseCode, $message);
     }
 
     public function invalidMethod()
     {
-        $data = ['response_code' => '405', 'message' => ['error' => 'Method not allowed']];
-        $this->view->send($data);
+        $responseCode = '405';
+        $message = ['error' => 'Method not allowed'];
+        $this->view->send($responseCode, $message);
     }
 }
 
