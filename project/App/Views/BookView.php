@@ -4,11 +4,11 @@ namespace App\Views;
 
 class BookView
 {
-    public function send($data)
+    public function send(string $responseCode, array $message): void
     {
         header('Content-Type: application/json');
         header('Access-Control-Allow-Origin: *');
-        http_response_code($data['response_code']);
-        echo json_encode($data['message']);
+        http_response_code($responseCode);
+        echo json_encode($message);
     }
 }
