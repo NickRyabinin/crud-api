@@ -19,11 +19,27 @@ class BookController
         $this->helper = $helper;
     }
 
+    public function create()
+    {
+        $inputData = $this->helper->getInputData();
+        $cleanedData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
+        $id = $this->helper->getId();
+        $responseCode = '400';
+        $message = ['error' => 'Invalid input data'];
+        if ($id === '') {
+            if ($this->book->store($cleanedData)) {
+                $responseCode = '201';
+                $message = ['message' => "Done, book added successfully"];
+            }
+        }
+        $this->view->send($responseCode, $message);
+    }
+
     public function read()
     {
         $id = $this->helper->getId();
         if ($id === '') {
-            $message = $this->book->getAll();
+            $message = $this->book->index();
             if ($message === []) {
                 $responseCode = '404';
                 $message = ['error' => 'No records'];
@@ -34,7 +50,7 @@ class BookController
             $responseCode = '400';
             $message = ['error' => 'Invalid ID'];
         } else {
-            $message = $this->book->get($id);
+            $message = $this->book->show($id);
             if ($message === false) {
                 $responseCode = '404';
                 $message = ['error' => 'No record with such ID'];
