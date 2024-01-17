@@ -29,6 +29,11 @@ class Helper
         return $this->sanitize($this->validate($this->getRequest()[0]));
     }
 
+    public function getInputData()
+    {
+        return json_decode(file_get_contents('php://input'), true) ?? [];
+    }
+
     public function validate(mixed $data): string | bool
     {
         if (is_int($data) || is_string($data)) {
