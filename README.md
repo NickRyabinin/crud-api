@@ -1,8 +1,8 @@
 ## CRUD API на  чистом PHP
 
+Попытка в REST-like CRUD API по паттерну MVC в парадигме ООП :-)
+Пока реализован MVP для сущности 'book'.
 Посмотреть, что получается, можно [тут](http://php-crud-api.alwaysdata.net/).
-
-Пока реализована MVP REST-like версия CRUD API сущности 'book':
 
 #### POST /books/ - CREATE
 
@@ -24,20 +24,7 @@
 
   No BODY needed
 
-#### PUT /books/*{id}* - UPDATE
-
-  <pre>
-  BODY - JSON {
-                  "title": title,
-                  "author": author,
-                  "published_at": year
-              }
-  </pre>
-
-Параметр "id" является обязательным.
-Все поля в BODY являются обязательными.
-
-#### PATCH /books/*{id}* - UPDATE partial
+#### PUT | PATCH /books/*{id}* - UPDATE
 
   <pre>
   BODY - JSON {
