@@ -22,17 +22,7 @@
   No BODY needed
   <p><h4>GET /books/<span class="text-italic">{id}</span></h4> - READ single id</p>
   No BODY needed 
-  <p><h4>PUT /books/<span class="text-italic">{id}</span></h4> - UPDATE</p>
-  <pre>
-  BODY - JSON {
-                  "title": title,
-                  "author": author,
-                  "published_at": year
-              }
-  </pre>
-  <p>Параметр "id" является обязательным.
-    Все поля в BODY являются обязательными.</p>
-  <p><h4>PATCH /books/<span class="text-italic">{id}</span></h4> - UPDATE partial</p>
+  <p><h4>PUT | PATCH /books/<span class="text-italic">{id}</span></h4> - UPDATE</p>
   <pre>
   BODY - JSON {
                   "title": title,
