@@ -53,13 +53,13 @@ class Book
         if ($this->checkId($id)) {
             if (count($filteredData) > 0) {
                 $query = "UPDATE {$this->entity}s SET";
-                foreach ($data as $key => $value) {
+                foreach ($filteredData as $key => $value) {
                     $query = $query . " {$key} = :{$key},";
                 }
                 $query = substr($query, 0, -1) . " WHERE id = :id";
                 $stmt = $this->pdo->prepare($query);
                 $stmt->bindParam(":id", $id);
-                foreach ($data as $key => $value) {
+                foreach ($filteredData as $key => $value) {
                     $stmt->bindValue(":{$key}", $value);
                 }
                 try {
