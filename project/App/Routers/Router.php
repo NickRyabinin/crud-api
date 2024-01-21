@@ -5,7 +5,7 @@ namespace App\Routers;
 use App\Core\Container;
 use App\Core\Helper;
 
-class BookRouter
+class Router
 {
     private $container;
     private $helper;

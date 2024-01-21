@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Book;
-use App\Views\BookView;
+use App\Views\View;
 use App\Core\Helper;
 
 class BookController
@@ -12,7 +12,7 @@ class BookController
     private $view;
     private $helper;
 
-    public function __construct(Book $book, BookView $view, Helper $helper)
+    public function __construct(Book $book, View $view, Helper $helper)
     {
         $this->book = $book;
         $this->view = $view;
@@ -114,18 +114,18 @@ class BookController
 
 /* http_response_code(400);
 ['error' => 'Invalid input data']
+['error' => 'Invalid ID']
 
 http_response_code(405);
 ['error' => 'Method not allowed']
 
 http_response_code(404);
 ['error' => 'No record with such ID']
-
-['message' => 'No records']
+['error' => 'No records']
 
 http_response_code(201);
 ['message' => "Done, {$entity} added successfully"]
 
+http_response_code(200);
 ['message' => "Done, {$entity} updated successfully"]
-['message' => "Done, {$entity} patched successfully"]
 ['message' => "Done, {$entity} deleted successfully"] */

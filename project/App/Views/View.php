@@ -2,7 +2,7 @@
 
 namespace App\Views;
 
-class BookView
+class View
 {
     public function send(string $responseCode, array $message): void
     {
