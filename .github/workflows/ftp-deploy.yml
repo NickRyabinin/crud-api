@@ -16,7 +16,7 @@ jobs:
         server: ftp-php-crud-api.alwaysdata.net
         username: php-crud-api
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /App
+        server-dir: /App/
         local-dir: /project/App/
 
     - name: FTP Deploy Dir 2
@@ -25,5 +25,5 @@ jobs:
         server: ftp-php-crud-api.alwaysdata.net
         username: php-crud-api
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /www
+        server-dir: /www/
         local-dir: /project/public/
