@@ -1,0 +1,29 @@
+name: ftp-deploy
+
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: FTP Deploy Dir 1
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      with:
+        server: ftp-php-crud-api.alwaysdata.net
+        username: php-crud-api
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: /App
+        local-dir: /project/App
+
+    - name: FTP Deploy Dir 2
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      with:
+        server: ftp-php-crud-api.alwaysdata.net
+        username: php-crud-api
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: /www
+        local-dir: /project/public
