@@ -34,6 +34,11 @@ class Helper
         return json_decode(file_get_contents('php://input'), true) ?? [];
     }
 
+    public function getToken()
+    {
+        return $_SERVER['HTTP_AUTHORIZATION'];
+    }
+
     public function validate(mixed $data): string | bool
     {
         if (is_int($data) || is_string($data)) {
