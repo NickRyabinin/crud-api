@@ -17,7 +17,7 @@ jobs:
         username: php-crud-api
         password: ${{ secrets.FTP_PASSWORD }}
         server-dir: /App
-        local-dir: /project/App
+        local-dir: /project/App/
 
     - name: FTP Deploy Dir 2
       uses: SamKirkland/FTP-Deploy-Action@4.0.0
@@ -26,4 +26,4 @@ jobs:
         username: php-crud-api
         password: ${{ secrets.FTP_PASSWORD }}
         server-dir: /www
-        local-dir: /project/public
+        local-dir: /project/public/
