@@ -33,7 +33,7 @@ class User
 
     public function index()
     {
-        $query = "SELECT * FROM {$this->entity}s";
+        $query = "SELECT login, created_at FROM {$this->entity}s";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
