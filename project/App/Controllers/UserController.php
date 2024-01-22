@@ -32,7 +32,6 @@ class UserController
             if ($login && $email) {
                 $token = hash('sha256', $login . $email . time());
                 $hashedToken = password_hash($token, PASSWORD_DEFAULT);
-                var_dump($hashedToken);
                 $cleanData['hashed_token'] = $hashedToken;
                 if ($this->user->store($cleanData)) {
                     $responseCode = '201';
