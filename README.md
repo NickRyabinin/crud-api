@@ -1,8 +1,50 @@
+[![ftp-deploy](https://github.com/NickRyabinin/crud-api/actions/workflows/ftp-deploy.yml/badge.svg)](https://github.com/NickRyabinin/crud-api/actions/workflows/ftp-deploy.yml)
+
 ## CRUD API на  чистом PHP
 
 Попытка в REST-like CRUD API по паттерну MVC в парадигме ООП :-)
-Пока реализован MVP для сущности 'book'.
+
+Пока реализован pre-MVP для сущностей 'user' и 'book'.
+
 Посмотреть, что получается, можно [тут](http://php-crud-api.alwaysdata.net/).
+
+#### POST /users/ - CREATE
+
+'Регистрация' пользователя - в ответ пользователь получает token, который требуется указывать в заголовке
+
+  <pre>
+  Authorization: Bearer *{token}*
+  </pre>
+
+при последующих обращениях к API (кроме GET запросов) для авторизации действий пользователя.
+
+  <pre>
+  BODY - JSON {
+                  "login": login,
+                  "email": email
+              }
+  </pre>
+
+Все поля в BODY являются обязательными.
+
+#### GET /users/ - READ all
+
+  No BODY needed
+
+#### GET /users/*{id}* - READ single id
+
+  No BODY needed
+
+#### PUT | PATCH /users/*{id}* - method not allowed
+
+#### DELETE /users/*{id}* - DELETE
+
+Пользователь может удалить только себя
+
+  No BODY needed
+
+Параметр "id" является обязательным.
+
 
 #### POST /books/ - CREATE
 
@@ -16,7 +58,7 @@
 
 Все поля в BODY являются обязательными.
 
-#### GET /books/ - READ ALL
+#### GET /books/ - READ all
 
   No BODY needed
 
