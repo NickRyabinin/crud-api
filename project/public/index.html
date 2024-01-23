@@ -9,6 +9,31 @@
 </head>
 
 <body class="bg-green text-white">
+  <p><h4>POST /users/</h4> - CREATE</p>
+  <p>'Регистрация' пользователя - в ответ пользователь получает token, который требуется указывать в заголовке
+
+  <pre>
+  Authorization: Bearer *{token}*
+  </pre>
+  
+  при последующих обращениях к API (кроме GET запросов) для авторизации действий пользователя.</p>
+  <pre>
+  BODY - JSON {
+                  "login": login,
+                  "email": email
+              }
+  </pre>
+  <p>Все поля в BODY являются обязательными.</p>
+  <p><h4>GET /users/</h4> - READ all</p>
+  No BODY needed
+  <p><h4>GET /users/<span class="text-italic">{id}</span></h4> - READ single id</p>
+  No BODY needed 
+  <p><h4>PUT | PATCH /users/<span class="text-italic">{id}</span></h4> - method not allowed</p>
+  <p><h4>DELETE /users/<span class="text-italic">{id}</span></h4> - DELETE</p>
+  <p>Пользователь может удалить только себя</p>
+  No BODY needed
+  <p>Параметр "id" является обязательным.</p>
+  <hr>
   <p><h4>POST /books/</h4> - CREATE</p>
   <pre>
   BODY - JSON {
