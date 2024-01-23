@@ -20,7 +20,7 @@ jobs:
         protocol: ftps
         log-level: verbose
         server-dir: /App/
-        local-dir: https://github.com/NickRyabinin/crud-api/tree/main/project/App/
+        local-dir: project/App/
 
     - name: FTP Deploy Dir 2
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -31,4 +31,4 @@ jobs:
         protocol: ftps
         log-level: verbose
         server-dir: /www/
-        local-dir: https://github.com/NickRyabinin/crud-api/tree/main/project/public/
+        local-dir: project/public/
