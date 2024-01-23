@@ -41,37 +41,10 @@ class User
 
     public function show($id)
     {
-        $query = "SELECT * FROM {$this->entity}s WHERE id = :id";
+        $query = "SELECT login, created_at FROM {$this->entity}s WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':id' => $id]);
         return $stmt->fetch();
-    }
-
-    public function update($id, $data)
-    {
-        $filteredData = array_intersect_key($data, array_flip($this->properties));
-        if ($this->checkId($id)) {
-            if (count($filteredData) > 0) {
-                $query = "UPDATE {$this->entity}s SET";
-                foreach ($filteredData as $key => $value) {
-                    $query = $query . " {$key} = :{$key},";
-                }
-                $query = substr($query, 0, -1) . " WHERE id = :id";
-                $stmt = $this->pdo->prepare($query);
-                $stmt->bindParam(":id", $id);
-                foreach ($filteredData as $key => $value) {
-                    $stmt->bindValue(":{$key}", $value);
-                }
-                try {
-                    if ($stmt->execute()) {
-                        return true;
-                    }
-                } catch (\PDOException $e) {
-                }
-            }
-            return null;
-        }
-        return false;
     }
 
     public function destroy($id)

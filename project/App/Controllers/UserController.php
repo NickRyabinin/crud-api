@@ -73,26 +73,7 @@ class UserController
 
     public function update()
     {
-        $id = $this->helper->getId();
-        if ($id === '' || $id === false) {
-            $responseCode = '400';
-            $message = ['error' => 'Invalid ID'];
-        } else {
-            $inputData = $this->helper->getInputData();
-            $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
-            $message = $this->user->update($id, $cleanData);
-            if ($message === false) {
-                $responseCode = '404';
-                $message = ['error' => 'No record with such ID'];
-            } elseif ($message === null) {
-                $responseCode = '400';
-                $message = ['error' => 'Invalid input data'];
-            } else {
-                $responseCode = '200';
-                $message = ["Done, user updated successfully"];
-            }
-        }
-        $this->view->send($responseCode, $message);
+        return $this->invalidMethod();
     }
 
     public function delete()
