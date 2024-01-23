@@ -8,22 +8,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Get latest code
+      uses: actions/checkout@v3
 
     - name: FTP Deploy Dir 1
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      uses: SamKirkland/FTP-Deploy-Action@4.3.4
       with:
         server: ftp-php-crud-api.alwaysdata.net
         username: php-crud-api
         password: ${{ secrets.FTP_PASSWORD }}
+        protocol: ftps
+        log-level: verbose
         server-dir: /App/
         local-dir: /project/App/
 
     - name: FTP Deploy Dir 2
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      uses: SamKirkland/FTP-Deploy-Action@4.3.4
       with:
         server: ftp-php-crud-api.alwaysdata.net
         username: php-crud-api
         password: ${{ secrets.FTP_PASSWORD }}
+        protocol: ftps
+        log-level: verbose
         server-dir: /www/
         local-dir: /project/public/
