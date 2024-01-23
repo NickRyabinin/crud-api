@@ -18,7 +18,7 @@ jobs:
         username: php-crud-api
         password: ${{ secrets.FTP_PASSWORD }}
         protocol: ftps
-        log-level: verbose
+        log-level: minimal
         server-dir: /App/
         local-dir: project/App/
 
@@ -29,6 +29,6 @@ jobs:
         username: php-crud-api
         password: ${{ secrets.FTP_PASSWORD }}
         protocol: ftps
-        log-level: verbose
+        log-level: minimal
         server-dir: /www/
         local-dir: project/public/
