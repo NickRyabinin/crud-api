@@ -36,7 +36,7 @@ class Helper
 
     public function getToken()
     {
-        return $_SERVER['HTTP_AUTHORIZATION'];
+        return $_SERVER['HTTP_AUTHORIZATION'] ?? '';
     }
 
     public function validate(mixed $data): string | bool
