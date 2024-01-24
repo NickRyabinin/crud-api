@@ -36,7 +36,14 @@ class Helper
 
     public function getToken()
     {
-        return $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        $headers = getallheaders();
+        if (isset($headers['Authorization'])) {
+            $authHeader = $headers['Authorization'];
+            $bearerToken = explode(' ', $authHeader);
+            $token = $bearerToken[1];
+            return $token;
+        }
+        return '';
     }
 
     public function validate(mixed $data): string | bool
