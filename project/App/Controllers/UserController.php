@@ -85,7 +85,7 @@ class UserController
             $message = $this->user->destroy($token);
             if ($message === false) {
                 $responseCode = '401';
-                $message = ['error' => 'No record with such token'];
+                $message = ['error' => 'Unauthorized, no such token'];
             } else {
                 $responseCode = '200';
                 $message = ["Done, user deleted successfully"];
