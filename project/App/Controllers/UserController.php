@@ -30,14 +30,13 @@ class UserController
             $login = $cleanData['login'] ?? '';
             $email = $cleanData['email'] ?? '';
             if ($login && $email) {
-                $token = hash('sha256', $login . $email . time());
-                $hashedToken = password_hash($token, PASSWORD_DEFAULT);
-                $cleanData['hashed_token'] = $hashedToken;
+                $token = hash('sha256', $email . $login);
+                $cleanData['hashed_token'] = $token;
                 if ($this->user->store($cleanData)) {
                     $responseCode = '201';
                     $message = [
                         'message' => "Done, user added successfully",
-                        'token' => "{$token}"
+                        'token' => base64_encode($token)
                     ];
                 }
             }
