@@ -13,7 +13,7 @@
 'Регистрация' пользователя - в ответ пользователь получает token, который требуется указывать в заголовке
 
   <pre>
-  Authorization: Bearer *{token}*
+  Authorization: Bearer {token}
   </pre>
 
 при последующих обращениях к API (кроме GET запросов) для авторизации действий пользователя.
@@ -27,23 +27,19 @@
 
 Все поля в BODY являются обязательными.
 
-#### GET /users/ - READ all
 
-  No BODY needed
+#### GET /users/ - READ
 
-#### GET /users/*{id}* - READ single id
 
-  No BODY needed
+#### GET /users/*{id}* - READ *{id}*
+
 
 #### PUT | PATCH /users/*{id}* - method not allowed
 
-#### DELETE /users/*{id}* - DELETE
 
-Пользователь может удалить только себя
+#### DELETE /users/ - DELETE
 
-  No BODY needed
-
-Параметр "id" является обязательным.
+Пользователь может удалить только себя, id не нужен.
 
 
 #### POST /books/ - CREATE
@@ -58,13 +54,11 @@
 
 Все поля в BODY являются обязательными.
 
-#### GET /books/ - READ all
+#### GET /books/ - READ
 
-  No BODY needed
 
-#### GET /books/*{id}* - READ single id
+#### GET /books/*{id}* - READ *{id}*
 
-  No BODY needed
 
 #### PUT | PATCH /books/*{id}* - UPDATE
 
@@ -79,8 +73,7 @@
 Параметр "id" является обязательным.
 В BODY должно присутствовать минимум одно поле.
 
-#### DELETE /books/*{id}* - DELETE
 
-  No BODY needed
+#### DELETE /books/*{id}* - DELETE
 
 Параметр "id" является обязательным.
