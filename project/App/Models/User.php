@@ -61,7 +61,7 @@ class User
 
     private function checkToken($hashedToken)
     {
-        $query = "SELECT EXISTS (SELECT id FROM {$this->entity}s WHERE hashed_token = :hashed_token) AS isExists";
+        $query = "SELECT EXISTS (SELECT id FROM users WHERE hashed_token = :hashed_token) AS isExists";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':hashed_token' => $hashedToken]);
         return (($stmt->fetch())['isExists'] === 0) ? false : true;
