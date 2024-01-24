@@ -13,7 +13,7 @@
   <p>'Регистрация' пользователя - в ответ пользователь получает token, который требуется указывать в заголовке
 
   <pre>
-  Authorization: Bearer *{token}*
+  Authorization: Bearer {token}
   </pre>
   
   при последующих обращениях к API (кроме GET запросов) для авторизации действий пользователя.</p>
@@ -24,15 +24,11 @@
               }
   </pre>
   <p>Все поля в BODY являются обязательными.</p>
-  <p><h4>GET /users/</h4> - READ all</p>
-  No BODY needed
-  <p><h4>GET /users/<span class="text-italic">{id}</span></h4> - READ single id</p>
-  No BODY needed 
+  <p><h4>GET /users/</h4> - READ</p>
+  <p><h4>GET /users/<span class="text-italic">{id}</span></h4> - READ <span class="text-italic">{id}</span></p>
   <p><h4>PUT | PATCH /users/<span class="text-italic">{id}</span></h4> - method not allowed</p>
-  <p><h4>DELETE /users/<span class="text-italic">{id}</span></h4> - DELETE</p>
-  <p>Пользователь может удалить только себя</p>
-  No BODY needed
-  <p>Параметр "id" является обязательным.</p>
+  <p><h4>DELETE /users/</h4> - DELETE</p>
+  <p>Пользователь может удалить только себя, id не нужен.</p>
   <hr>
   <p><h4>POST /books/</h4> - CREATE</p>
   <pre>
@@ -43,10 +39,8 @@
               }
   </pre>
   <p>Все поля в BODY являются обязательными.</p>
-  <p><h4>GET /books/</h4> - READ all</p>
-  No BODY needed
-  <p><h4>GET /books/<span class="text-italic">{id}</span></h4> - READ single id</p>
-  No BODY needed 
+  <p><h4>GET /books/</h4> - READ</p>
+  <p><h4>GET /books/<span class="text-italic">{id}</span></h4> - READ <span class="text-italic">{id}</span></p>
   <p><h4>PUT | PATCH /books/<span class="text-italic">{id}</span></h4> - UPDATE</p>
   <pre>
   BODY - JSON {
@@ -58,7 +52,6 @@
   <p>Параметр "id" является обязательным.
     В BODY должно присутствовать минимум одно поле.</p>
   <p><h4>DELETE /books/<span class="text-italic">{id}</span></h4> - DELETE</p>
-  No BODY needed
   <p>Параметр "id" является обязательным.</p>
 </body>
 
