@@ -79,14 +79,14 @@ class UserController
     public function delete()
     {
         $id = $this->helper->getId();
-        if ($id === '' || $id === false) {
-            $responseCode = '400';
-            $message = ['error' => 'Invalid ID'];
-        } else {
-            $message = $this->user->destroy($id);
+        $token = $this->helper->getToken();
+        $responseCode = '400';
+        $message = ['error' => 'Invalid input data'];
+        if ($id === '') {
+            $message = $this->user->destroy($token);
             if ($message === false) {
-                $responseCode = '404';
-                $message = ['error' => 'No record with such ID'];
+                $responseCode = '401';
+                $message = ['error' => 'No record with such token'];
             } else {
                 $responseCode = '200';
                 $message = ["Done, user deleted successfully"];

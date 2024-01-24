@@ -33,7 +33,7 @@ class User
 
     public function index()
     {
-        $query = "SELECT login, created_at FROM {$this->entity}s";
+        $query = "SELECT id, login, created_at FROM {$this->entity}s";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -41,28 +41,29 @@ class User
 
     public function show($id)
     {
-        $query = "SELECT login, created_at FROM {$this->entity}s WHERE id = :id";
+        $query = "SELECT id, login, created_at FROM {$this->entity}s WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':id' => $id]);
         return $stmt->fetch();
     }
 
-    public function destroy($id)
+    public function destroy($token)
     {
-        if ($this->checkId($id)) {
-            $query = "DELETE FROM {$this->entity}s WHERE id= :id";
+        $hashedToken = password_hash($token, PASSWORD_DEFAULT);
+        if ($this->checkToken($hashedToken)) {
+            $query = "DELETE FROM {$this->entity}s WHERE hashed_token = :hashed_token";
             $stmt = $this->pdo->prepare($query);
-            $stmt->execute([':id' => $id]);
+            $stmt->execute([':hashed_token' => $hashedToken]);
             return true;
         }
         return false;
     }
 
-    private function checkId($id)
+    private function checkToken($hashedToken)
     {
-        $query = "SELECT EXISTS (SELECT id FROM {$this->entity}s WHERE id = :id) AS isExists";
+        $query = "SELECT EXISTS (SELECT id FROM {$this->entity}s WHERE hashed_token = :hashed_token) AS isExists";
         $stmt = $this->pdo->prepare($query);
-        $stmt->execute([':id' => $id]);
+        $stmt->execute([':hashed_token' => $hashedToken]);
         return (($stmt->fetch())['isExists'] === 0) ? false : true;
     }
 
