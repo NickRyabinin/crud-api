@@ -49,7 +49,7 @@ class User
 
     public function destroy($token)
     {
-        $hashedToken = password_hash($token, PASSWORD_DEFAULT);
+        $hashedToken = base64_decode($token);
         if ($this->checkToken($hashedToken)) {
             $query = "DELETE FROM {$this->entity}s WHERE hashed_token = :hashed_token";
             $stmt = $this->pdo->prepare($query);
