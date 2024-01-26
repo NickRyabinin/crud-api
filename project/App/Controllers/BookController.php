@@ -5,6 +5,9 @@ namespace App\Controllers;
 use App\Models\Book;
 use App\Views\View;
 use App\Core\Helper;
+use App\Core\Exceptions\InvalidIdException;
+use App\Core\Exceptions\InvalidTokenException;
+use App\Core\Exceptions\InvalidDataException;
 
 class BookController
 {
@@ -23,19 +26,21 @@ class BookController
     {
         $id = $this->helper->getId();
         $token = $this->helper->getToken();
-        $responseCode = '400';
-        $message = ['error' => 'Invalid input data'];
-        if ($id === '') {
+        if ($id !== '') {
+            $responseCode = '400';
+            $message = ['error' => 'Invalid input data'];
+        } else {
             $inputData = $this->helper->getInputData();
             $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
-            $message = $this->book->store($token, $cleanData);
-            if ($message === true) {
+            try {
+                $message = $this->book->store($token, $cleanData);
                 $responseCode = '201';
                 $message = ['message' => "Done, book added successfully"];
-            } elseif ($message === '') {
+            } catch (InvalidTokenException $e) {
                 $responseCode = '401';
                 $message = ['error' => 'Unauthorized, no such token'];
-            } else {
+            } catch (InvalidDataException $e) {
+                $responseCode = '400';
                 $message = ['error' => 'Invalid input data'];
             }
         }
@@ -78,19 +83,19 @@ class BookController
         } else {
             $inputData = $this->helper->getInputData();
             $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
-            $message = $this->book->update($id, $token, $cleanData);
-            if ($message === false) {
-                $responseCode = '404';
-                $message = ['error' => 'No record with such ID'];
-            } elseif ($message === null) {
-                $responseCode = '400';
-                $message = ['error' => 'Invalid input data'];
-            } elseif ($message === '') {
-                $responseCode = '401';
-                $message = ['error' => 'Unauthorized, no such token'];
-            } else {
+            try {
+                $message = $this->book->update($id, $token, $cleanData);
                 $responseCode = '200';
                 $message = ["Done, book updated successfully"];
+            } catch (InvalidIdException $e) {
+                $responseCode = '404';
+                $message = ['error' => 'No record with such ID'];
+            } catch (InvalidTokenException $e) {
+                $responseCode = '401';
+                $message = ['error' => 'Unauthorized, no such token'];
+            } catch (InvalidDataException $e) {
+                $responseCode = '400';
+                $message = ['error' => 'Invalid input data'];
             }
         }
         $this->view->send($responseCode, $message);

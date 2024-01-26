@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Core\Exceptions\InvalidIdException;
+use App\Core\Exceptions\InvalidTokenException;
+use App\Core\Exceptions\InvalidDataException;
+
 class Book
 {
     private $entity = 'book';
@@ -16,25 +20,24 @@ class Book
     public function store($token, $data)
     {
         $hashedToken = base64_decode($token);
-        if ($this->compare($this->properties, $data)) {
-            if ($this->checkToken($hashedToken)) {
-                try {
-                    $query = "INSERT INTO {$this->entity}s (title, author, published_at)
-                        VALUES (:title, :author, :published_at)";
-                    $stmt = $this->pdo->prepare($query);
-                    foreach ($data as $key => $value) {
-                        $stmt->bindValue(":{$key}", $value);
-                    }
-                    $stmt->execute();
-                    return true;
-                } catch (\PDOException $e) {
-                    return false;
-                }
-            } else {
-                return '';
-            }
+        if (!$this->compare($this->properties, $data)) {
+            throw new InvalidDataException();
         }
-        return false;
+        if (!$this->checkToken($hashedToken)) {
+            throw new InvalidTokenException();
+        }
+        $query = "INSERT INTO {$this->entity}s (title, author, published_at)
+            VALUES (:title, :author, :published_at)";
+        try {
+            $stmt = $this->pdo->prepare($query);
+            foreach ($data as $key => $value) {
+                $stmt->bindValue(":{$key}", $value);
+            }
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            throw new InvalidDataException();
+        }
+        return true;
     }
 
     public function index()
@@ -53,37 +56,37 @@ class Book
         return $stmt->fetch();
     }
 
-    public function update($id, $token, $data)
+    public function update(string $id, string $token, array $data): bool
     {
         $hashedToken = base64_decode($token);
         $filteredData = array_intersect_key($data, array_flip($this->properties));
-        if ($this->checkId($id)) {
-            if ($this->checkToken($hashedToken)) {
-                if (count($filteredData) > 0) {
-                    $query = "UPDATE {$this->entity}s SET";
-                    foreach ($filteredData as $key => $value) {
-                        $query = $query . " {$key} = :{$key},";
-                    }
-                    $query = substr($query, 0, -1) . " WHERE id = :id";
-                    $stmt = $this->pdo->prepare($query);
-                    $stmt->bindParam(":id", $id);
-                    foreach ($filteredData as $key => $value) {
-                        $stmt->bindValue(":{$key}", $value);
-                    }
-                    try {
-                        if ($stmt->execute()) {
-                            return true;
-                        }
-                    } catch (\PDOException $e) {
-                        return null;
-                    }
-                }
-                return null;
-            }
-            return '';
+        if (!$this->checkId($id)) {
+            throw new InvalidIdException();
         }
-        return false;
+        if (!$this->checkToken($hashedToken)) {
+            throw new InvalidTokenException();
+        }
+        if (count($filteredData) === 0) {
+            throw new InvalidDataException();
+        }
+        $query = "UPDATE {$this->entity}s SET";
+        foreach ($filteredData as $key => $value) {
+            $query = $query . " {$key} = :{$key},";
+        }
+        $query = substr($query, 0, -1) . " WHERE id = :id";
+        try {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->bindParam(":id", $id);
+            foreach ($filteredData as $key => $value) {
+                $stmt->bindValue(":{$key}", $value);
+            }
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            throw new InvalidDataException();
+        }
+        return true;
     }
+
 
     public function destroy($id, $token)
     {
