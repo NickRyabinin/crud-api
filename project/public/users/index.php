@@ -1,12 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../../App/Core/Container.php';
-require_once __DIR__ . '/../../App/Core/Database.php';
-require_once __DIR__ . '/../../App/Core/Helper.php';
-require_once __DIR__ . '/../../App/Routers/Router.php';
-require_once __DIR__ . '/../../App/Models/User.php';
-require_once __DIR__ . '/../../App/Controllers/UserController.php';
-require_once __DIR__ . '/../../App/Views/View.php';
+spl_autoload_register(function ($className) {
+    $file = __DIR__ . '/../../' . str_replace('\\', '/', $className) . '.php';
+    if (file_exists($file)) {
+        require_once $file;
+    }
+});
 
 use App\Core\Container;
 use App\Core\Database;
