@@ -18,7 +18,7 @@ class Router
     public function route()
     {
         $resource = $this->helper->getResource();
-        if ($resource == '/') {
+        if ($resource === '') {
             $controller = $this->container->get('homeController');
             $controller->index();
             return;
@@ -54,6 +54,6 @@ class Router
         if ($this->container->get($controllerName) !== false) {
             return $this->container->get($controllerName);
         }
-        die("I'm dying...");
+        die("Resource not found");
     }
 }
