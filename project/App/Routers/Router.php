@@ -3,7 +3,6 @@
 namespace App\Routers;
 
 use App\Core\Container;
-use App\Core\Helper;
 
 class Router
 {
@@ -18,7 +17,13 @@ class Router
 
     public function route()
     {
-        $controller = $this->getController();
+        $resource = $this->helper->getResource();
+        if ($resource === '') {
+            $controller = $this->container->get('homeController');
+            $controller->index();
+            return;
+        }
+        $controller = $this->getController($resource);
         $method = $this->helper->getHttpMethod();
 
         switch ($method) {
@@ -42,15 +47,13 @@ class Router
         }
     }
 
-    private function getController()
+    private function getController(string $resource)
     {
-        $resource = $this->helper->getResource();
         $controllerName = $this->helper->sanitize(substr($resource, 0, -1)) . 'Controller';
 
         if ($this->container->get($controllerName) !== false) {
             return $this->container->get($controllerName);
-        } else {
-            die("I'm dying...");
         }
+        die("Resource not found");
     }
 }
