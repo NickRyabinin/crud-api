@@ -35,4 +35,4 @@ jobs:
         protocol: ftps
         log-level: minimal
         server-dir: /www/
-        local-dir: project/public/
+        local-dir: project/www/
