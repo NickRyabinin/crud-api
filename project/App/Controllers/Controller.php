@@ -2,20 +2,15 @@
 
 namespace App\Controllers;
 
-use App\Views\View;
-use App\Core\Helper;
-
 abstract class Controller
 {
     protected $model;
     protected $view;
     protected $helper;
 
-    public function __construct($model, View $view, Helper $helper)
+    public function __construct($model)
     {
         $this->model = $model;
-        $this->view = $view;
-        $this->helper = $helper;
     }
 
     public function read()

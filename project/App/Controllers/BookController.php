@@ -17,7 +17,7 @@ class BookController extends Controller
 
     public function __construct(Book $book, View $view, Helper $helper)
     {
-        parent::__construct($book, $view, $helper);
+        parent::__construct($book);
         $this->book = $book;
         $this->view = $view;
         $this->helper = $helper;

@@ -14,7 +14,7 @@ class UserController extends Controller
 
     public function __construct(User $user, View $view, Helper $helper)
     {
-        parent::__construct($user, $view, $helper);
+        parent::__construct($user);
         $this->user = $user;
         $this->view = $view;
         $this->helper = $helper;
