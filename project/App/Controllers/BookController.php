@@ -9,14 +9,15 @@ use App\Core\Exceptions\InvalidIdException;
 use App\Core\Exceptions\InvalidTokenException;
 use App\Core\Exceptions\InvalidDataException;
 
-class BookController
+class BookController extends Controller
 {
-    private $book;
-    private $view;
-    private $helper;
+    protected $book;
+    protected $view;
+    protected $helper;
 
     public function __construct(Book $book, View $view, Helper $helper)
     {
+        parent::__construct($book, $view, $helper);
         $this->book = $book;
         $this->view = $view;
         $this->helper = $helper;
@@ -42,32 +43,6 @@ class BookController
             } catch (InvalidDataException $e) {
                 $responseCode = '400';
                 $message = ['error' => 'Invalid input data'];
-            }
-        }
-        $this->view->send($responseCode, $message);
-    }
-
-    public function read()
-    {
-        $id = $this->helper->getId();
-        if ($id === '') {
-            $message = $this->book->index();
-            if ($message === []) {
-                $responseCode = '404';
-                $message = ['error' => 'No records'];
-            } else {
-                $responseCode = '200';
-            }
-        } elseif ($id === false) {
-            $responseCode = '400';
-            $message = ['error' => 'Invalid ID'];
-        } else {
-            $message = $this->book->show($id);
-            if ($message === false) {
-                $responseCode = '404';
-                $message = ['error' => 'No record with such ID'];
-            } else {
-                $responseCode = '200';
             }
         }
         $this->view->send($responseCode, $message);
@@ -121,13 +96,6 @@ class BookController
                 $message = ["Done, book deleted successfully"];
             }
         }
-        $this->view->send($responseCode, $message);
-    }
-
-    public function invalidMethod()
-    {
-        $responseCode = '405';
-        $message = ['error' => 'Method not allowed'];
         $this->view->send($responseCode, $message);
     }
 }
