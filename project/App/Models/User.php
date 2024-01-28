@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-class User
+class User extends Model
 {
-    private $entity = 'user';
-    private $properties = ['login', 'email', 'hashed_token'];
-    private $pdo;
+    protected $entity = 'user';
+    protected $properties = ['login', 'email', 'hashed_token'];
+    protected $pdo;
 
     public function __construct(\PDO $pdo)
     {
@@ -57,18 +57,5 @@ class User
             return true;
         }
         return false;
-    }
-
-    private function checkToken($hashedToken)
-    {
-        $query = "SELECT EXISTS (SELECT id FROM users WHERE hashed_token = :hashed_token) AS isExists";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute([':hashed_token' => $hashedToken]);
-        return (($stmt->fetch())['isExists'] === 0) ? false : true;
-    }
-
-    private function compare(array $properties, array $input): bool
-    {
-        return (count($properties) === count($input) && array_diff($properties, array_keys($input)) === []);
     }
 }
