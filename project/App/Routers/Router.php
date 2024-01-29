@@ -19,8 +19,7 @@ class Router
     {
         $resource = $this->helper->getResource();
         if ($resource === '') {
-            $controller = $this->container->get('homeController');
-            $controller->index();
+            $this->container->get('homeController')->index();
             return;
         }
         $controller = $this->getController($resource);
@@ -41,7 +40,6 @@ class Router
                 $controller->delete();
                 break;
             default:
-                // Invalid method
                 $controller->invalidMethod();
                 break;
         }
