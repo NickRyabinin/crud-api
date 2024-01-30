@@ -1,3 +1,5 @@
+install:
+	composer install
 test:
 	composer exec --verbose phpunit project/App/Tests/
 test-coverage:
