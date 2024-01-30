@@ -1,0 +1,11 @@
+{
+    "name": "nick/crud-api",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Николай",
+            "email": "rnn2002@mail.ru"
+        }
+    ],
+    "require": {}
+}
