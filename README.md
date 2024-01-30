@@ -1,5 +1,7 @@
+[![tests](https://github.com/NickRyabinin/crud-api/actions/workflows/tests.yml/badge.svg)](https://github.com/NickRyabinin/crud-api/actions/workflows/tests.yml)
 [![ftp-deploy](https://github.com/NickRyabinin/crud-api/actions/workflows/ftp-deploy.yml/badge.svg)](https://github.com/NickRyabinin/crud-api/actions/workflows/ftp-deploy.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/f66141ceb354dd3f56a5/maintainability)](https://codeclimate.com/github/NickRyabinin/crud-api/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/f66141ceb354dd3f56a5/test_coverage)](https://codeclimate.com/github/NickRyabinin/crud-api/test_coverage)
 
 ## CRUD API на  чистом PHP
 
