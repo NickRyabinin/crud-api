@@ -1,6 +1,4 @@
 test:
-	PHPUnit/phpunit.phar project/App/Tests/
-lint:
-	phpcs -- --standard=PSR12 .
+	composer exec --verbose phpunit project/App/Tests/
 test-coverage:
-	PHPUnit/phpunit.phar project/App/Tests/ -- --coverage-clover build/logs/clover.xml
+	composer exec --verbose phpunit project/App/Tests/ -- --coverage-clover build/logs/clover.xml
