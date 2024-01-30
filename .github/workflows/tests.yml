@@ -19,6 +19,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
+      - name: Set permissions
+        run: chmod +x PHPUnit/phpunit.phar
       - name: Run test & publish code coverage
         uses: paambaati/codeclimate-action@v5.0.0
         env:
