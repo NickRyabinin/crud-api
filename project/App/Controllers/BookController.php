@@ -61,7 +61,7 @@ class BookController extends Controller
             try {
                 $message = $this->book->update($id, $token, $cleanData);
                 $responseCode = '200';
-                $message = ["Done, book updated successfully"];
+                $message = ['message' => "Done, book updated successfully"];
             } catch (InvalidIdException $e) {
                 $responseCode = '404';
                 $message = ['error' => 'No record with such ID'];
@@ -93,7 +93,7 @@ class BookController extends Controller
                 $message = ['error' => 'Unauthorized, no such token'];
             } else {
                 $responseCode = '200';
-                $message = ["Done, book deleted successfully"];
+                $message = ['message' => "Done, book deleted successfully"];
             }
         }
         $this->view->send($responseCode, $message);
