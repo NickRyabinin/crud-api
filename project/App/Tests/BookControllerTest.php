@@ -37,13 +37,18 @@ class BookControllerTest extends TestCase
     {
         $this->helper->method('getId')->willReturn('');
         $this->helper->method('getToken')->willReturn('validToken');
-        $this->helper->method('getInputData')->willReturn(['title' => 'Test Book', 'author' => 'Test Author']);
-        $this->helper->method('sanitize')->will($this->returnArgument(0));
-        $this->helper->method('validate')->will($this->returnArgument(0));
+        $this->helper->method('getInputData')->willReturn([
+            'title' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')
+        ]);
+        $this->helper->method('sanitize')->willReturnArgument(0);
+        $this->helper->method('validate')->willReturnArgument(0);
 
-        $this->book->expects($this->once())->method('store')->with('validToken', ['title' => 'Test Book', 'author' => 'Test Author'])->willReturn(true);
+        $this->book->expects($this->once())->method('store')
+            ->with('validToken', ['title' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')])
+            ->willReturn(true);
 
-        $this->view->expects($this->once())->method('send')->with('201', ['message' => "Done, book added successfully"]);
+        $this->view->expects($this->once())->method('send')
+            ->with('201', ['message' => "Done, book added successfully"]);
 
         $this->controller->create();
     }
@@ -52,14 +57,51 @@ class BookControllerTest extends TestCase
     {
         $this->helper->method('getId')->willReturn('');
         $this->helper->method('getToken')->willReturn('invalidToken');
-        $this->helper->method('getInputData')->willReturn(['title' => 'Test Book', 'author' => 'Test Author']);
-        $this->helper->method('sanitize')->will($this->returnArgument(0));
-        $this->helper->method('validate')->will($this->returnArgument(0));
+        $this->helper->method('getInputData')->willReturn([
+            'title' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')
+        ]);
+        $this->helper->method('sanitize')->willReturnArgument(0);
+        $this->helper->method('validate')->willReturnArgument(0);
 
-        $this->book->expects($this->once())->method('store')->with('invalidToken', ['title' => 'Test Book', 'author' => 'Test Author'])->willThrowException(new InvalidTokenException());
+        $this->book->expects($this->once())->method('store')
+            ->with('invalidToken', ['title' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')])
+            ->willThrowException(new InvalidTokenException());
 
-        $this->view->expects($this->once())->method('send')->with('401', ['error' => 'Unauthorized, no such token']);
+        $this->view->expects($this->once())->method('send')
+            ->with('401', ['error' => 'Unauthorized, no such token']);
 
         $this->controller->create();
+    }
+
+    public function testDelete()
+    {
+        $validId = (string)random_int(1, 10);
+        $this->helper->method('getId')->willReturn($validId);
+        $this->helper->method('getToken')->willReturn('validToken');
+
+        $this->book->expects($this->once())->method('destroy')
+            ->with($validId, 'validToken')
+            ->willReturn(true);
+
+        $this->view->expects($this->once())->method('send')
+            ->with('200', ['message' => "Done, book deleted successfully"]);
+
+        $this->controller->delete();
+    }
+
+    public function testDeleteWithInvalidToken()
+    {
+        $validId = (string)random_int(1, 10);
+        $this->helper->method('getId')->willReturn($validId);
+        $this->helper->method('getToken')->willReturn('invalidToken');
+
+        $this->book->expects($this->once())->method('destroy')
+            ->with($validId, 'invalidToken')
+            ->willReturn('');
+
+        $this->view->expects($this->once())->method('send')
+            ->with('401', ['error' => 'Unauthorized, no such token']);
+
+        $this->controller->delete();
     }
 }
