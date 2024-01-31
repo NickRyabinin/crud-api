@@ -63,7 +63,7 @@ class UserController extends Controller
                 $message = ['error' => 'Unauthorized, no such token'];
             } else {
                 $responseCode = '200';
-                $message = ["Done, user deleted successfully"];
+                $message = ['message' => "Done, user deleted successfully"];
             }
         }
         $this->view->send($responseCode, $message);
