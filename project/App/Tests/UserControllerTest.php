@@ -27,12 +27,12 @@ class UserControllerTest extends TestCase
         $this->user = $this->createMock(User::class);
         $this->view = $this->createMock(View::class);
         $this->helper = $this->createMock(Helper::class);
+        $this->helper->method('getId')->willReturn('');
         $this->controller = new UserController($this->user, $this->view, $this->helper);
     }
 
     public function testCreate()
     {
-        $this->helper->method('getId')->willReturn('');
         $this->helper->method('getInputData')->willReturn([
             'login' => 'Test Login', 'email' => 'Test@Email'
         ]);
@@ -57,7 +57,6 @@ class UserControllerTest extends TestCase
 
     public function testDelete()
     {
-        $this->helper->method('getId')->willReturn('');
         $this->helper->method('getToken')->willReturn('validToken');
 
         $this->user->expects($this->once())->method('destroy')
@@ -72,7 +71,6 @@ class UserControllerTest extends TestCase
 
     public function testDeleteWithInvalidToken()
     {
-        $this->helper->method('getId')->willReturn('');
         $this->helper->method('getToken')->willReturn('invalidToken');
 
         $this->user->expects($this->once())->method('destroy')
