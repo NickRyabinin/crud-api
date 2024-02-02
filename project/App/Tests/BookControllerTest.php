@@ -73,6 +73,34 @@ class BookControllerTest extends TestCase
         $this->controller->create();
     }
 
+    public function testReadIndex()
+    {
+        $this->helper->method('getId')->willReturn('');
+        $year1 = rand(1000, 2024);
+        $year2 = rand(1000, 2024);
+        $date1 = date('YYYY-MM-DD HH:MM:SS');
+        $date2 = date('YYYY-MM-DD HH:MM:SS');
+        $data = [
+            [
+                'id' => 1,
+                'title' => 'Title 1',
+                'author' => 'Author 1',
+                'published_at' => $year1,
+                'created_at' => $date1
+            ],
+            [
+                'id' => 2,
+                'title' => 'Title 2',
+                'author' => 'Author 2',
+                'published_at' => $year2,
+                'created_at' => $date2
+            ]
+        ];
+        $this->book->expects($this->once())->method('index')->willReturn($data);
+        $this->view->expects($this->once())->method('send')->with('200', $data);
+        $this->controller->read();
+    }
+
     public function testDelete()
     {
         $validId = (string)random_int(1, 10);

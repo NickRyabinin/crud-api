@@ -55,6 +55,27 @@ class UserControllerTest extends TestCase
         $this->controller->create();
     }
 
+    public function testReadIndex()
+    {
+        $date1 = date('YYYY-MM-DD HH:MM:SS');
+        $date2 = date('YYYY-MM-DD HH:MM:SS');
+        $data = [
+            [
+                'id' => 1,
+                'login' => 'Test Login 1',
+                'created_at' => $date1
+            ],
+            [
+                'id' => 2,
+                'login' => 'Test Login 2',
+                'created_at' => $date2
+            ]
+        ];
+        $this->user->expects($this->once())->method('index')->willReturn($data);
+        $this->view->expects($this->once())->method('send')->with('200', $data);
+        $this->controller->read();
+    }
+
     public function testDelete()
     {
         $this->helper->method('getToken')->willReturn('validToken');
