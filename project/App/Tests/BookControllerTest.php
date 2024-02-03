@@ -2,13 +2,6 @@
 
 namespace App\Tests;
 
-spl_autoload_register(function ($className) {
-    $file = __DIR__ . '/../../' . str_replace('\\', '/', $className) . '.php';
-    if (file_exists($file)) {
-        require_once $file;
-    }
-});
-
 use App\Controllers\BookController;
 use App\Models\Book;
 use App\Views\View;
@@ -73,6 +66,26 @@ class BookControllerTest extends TestCase
         $this->controller->create();
     }
 
+    public function testCreateWithInvalidData()
+    {
+        $this->helper->method('getId')->willReturn('');
+        $this->helper->method('getToken')->willReturn('validToken');
+        $this->helper->method('getInputData')->willReturn([
+            'label' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')
+        ]);
+        $this->helper->method('sanitize')->willReturnArgument(0);
+        $this->helper->method('validate')->willReturnArgument(0);
+
+        $this->book->expects($this->once())->method('store')
+            ->with('validToken', ['label' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')])
+            ->willThrowException(new InvalidDataException());
+
+        $this->view->expects($this->once())->method('send')
+            ->with('400', ['error' => 'Invalid input data']);
+
+        $this->controller->create();
+    }
+
     public function testReadIndex()
     {
         $this->helper->method('getId')->willReturn('');
@@ -99,6 +112,26 @@ class BookControllerTest extends TestCase
         $this->book->expects($this->once())->method('index')->willReturn($data);
         $this->view->expects($this->once())->method('send')->with('200', $data);
         $this->controller->read();
+    }
+
+    public function testReadShow()
+    {
+        $validId = (string)random_int(1, 10);
+        $this->helper->method('getId')->willReturn($validId);
+        $year = rand(1000, 2024);
+        $date = date('YYYY-MM-DD HH:MM:SS');
+        $data = [
+            [
+                'id' => $validId,
+                'title' => 'Some Title',
+                'author' => 'Some Author',
+                'published_at' => $year,
+                'created_at' => $date
+            ]
+        ];
+        $this->book->expects($this->once())->method('show')->willReturn($data);
+        $this->view->expects($this->once())->method('send')->with('200', $data);
+        $this->controller->read($validId);
     }
 
     public function testDelete()
