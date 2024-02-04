@@ -131,7 +131,54 @@ class BookControllerTest extends TestCase
         ];
         $this->book->expects($this->once())->method('show')->willReturn($data);
         $this->view->expects($this->once())->method('send')->with('200', $data);
-        $this->controller->read($validId);
+        $this->controller->read();
+    }
+
+    public function testUpdate()
+    {
+        $validId = (string)random_int(1, 10);
+        $data = [
+            'title' => 'Updated Title',
+            'author' => 'Updated Author',
+            'published_at' => date('Y')
+        ];
+        $this->helper->method('getId')->willReturn($validId);
+        $this->helper->method('getToken')->willReturn('validToken');
+        $this->helper->method('getInputData')->willReturn($data);
+        $this->helper->method('sanitize')->willReturnArgument(0);
+        $this->helper->method('validate')->willReturnArgument(0);
+
+        $this->book->expects($this->once())->method('update')
+            ->with($validId, 'validToken', $data)
+            ->willReturn(true);
+
+        $this->view->expects($this->once())->method('send')
+            ->with('200', ['message' => "Done, book updated successfully"]);
+
+        $this->controller->update();
+    }
+
+    public function testUpdateWithUnexistedId()
+    {
+        $data = [
+            'title' => 'Updated Title',
+            'author' => 'Updated Author',
+            'published_at' => date('Y')
+        ];
+        $this->helper->method('getId')->willReturn('unexistedId');
+        $this->helper->method('getToken')->willReturn('validToken');
+        $this->helper->method('getInputData')->willReturn($data);
+        $this->helper->method('sanitize')->willReturnArgument(0);
+        $this->helper->method('validate')->willReturnArgument(0);
+
+        $this->book->expects($this->once())->method('update')
+            ->with('unexistedId', 'validToken', $data)
+            ->willThrowException(new InvalidIdException());
+
+        $this->view->expects($this->once())->method('send')
+            ->with('404', ['error' => 'No record with such ID']);
+
+        $this->controller->update();
     }
 
     public function testDelete()
