@@ -17,7 +17,7 @@ class Book extends Model
         $this->pdo = $pdo;
     }
 
-    public function store($token, $data)
+    public function store(string $token, array $data): bool
     {
         $hashedToken = base64_decode($token);
         if (!$this->compare($this->properties, $data)) {
@@ -40,7 +40,7 @@ class Book extends Model
         return true;
     }
 
-    public function index()
+    public function index(): array
     {
         $query = "SELECT * FROM {$this->entity}s";
         $stmt = $this->pdo->prepare($query);
@@ -48,7 +48,7 @@ class Book extends Model
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function show($id)
+    public function show(string $id): array
     {
         $query = "SELECT * FROM {$this->entity}s WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
@@ -87,7 +87,7 @@ class Book extends Model
         return true;
     }
 
-    public function destroy($id, $token)
+    public function destroy(string $id, string $token): bool | string
     {
         $hashedToken = base64_decode($token);
         if ($this->checkId($id)) {
