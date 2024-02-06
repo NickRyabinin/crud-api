@@ -48,6 +48,30 @@ class UserControllerTest extends TestCase
         $this->controller->create();
     }
 
+    public function testCreateWithInvalidData()
+    {
+        $login = 'Test Login';
+        $email = 'NotUnique@Email';
+        $token = hash('sha256', $email . $login);
+        $this->helper->method('getId')->willReturn('');
+        $this->helper->method('getInputData')->willReturn([
+            'login' => $login, 'email' => $email
+        ]);
+        $this->helper->method('sanitize')->willReturnArgument(0);
+        $this->helper->method('validate')->willReturnArgument(0);
+
+        $this->user->expects($this->once())->method('store')
+            ->with(['login' => $login, 'email' => $email, 'hashed_token' => $token])
+            ->willReturn(false);
+
+        $this->view->expects($this->once())->method('send')
+            ->with('400', [
+                'error' => 'Invalid input data'
+            ]);
+
+        $this->controller->create();
+    }
+
     public function testReadIndex()
     {
         $this->helper->method('getId')->willReturn('');
@@ -84,7 +108,15 @@ class UserControllerTest extends TestCase
         ];
         $this->user->expects($this->once())->method('show')->willReturn($data);
         $this->view->expects($this->once())->method('send')->with('200', $data);
-        $this->controller->read($validId);
+        $this->controller->read();
+    }
+
+    public function testUpdate()
+    {
+        $this->view->expects($this->once())->method('send')
+            ->with('405', ['error' => 'Method not allowed']);
+
+        $this->controller->update();
     }
 
     public function testDelete()
@@ -98,6 +130,17 @@ class UserControllerTest extends TestCase
 
         $this->view->expects($this->once())->method('send')
             ->with('200', ['message' => "Done, user deleted successfully"]);
+
+        $this->controller->delete();
+    }
+
+    public function testDeleteWithInvalidData()
+    {
+        $this->helper->method('getId')->willReturn('invalidId');
+        $this->helper->method('getToken')->willReturn('validToken');
+
+        $this->view->expects($this->once())->method('send')
+            ->with('400', ['error' => 'Invalid input data']);
 
         $this->controller->delete();
     }
