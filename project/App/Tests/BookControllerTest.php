@@ -249,7 +249,7 @@ class BookControllerTest extends TestCase
 
         $this->book->expects($this->once())->method('destroy')
             ->with('unexistedId', 'validToken')
-            ->willReturn(false);
+            ->willThrowException(new InvalidIdException());
 
         $this->view->expects($this->once())->method('send')
             ->with('404', ['error' => 'No record with such ID']);
@@ -264,7 +264,7 @@ class BookControllerTest extends TestCase
 
         $this->book->expects($this->once())->method('destroy')
             ->with($this->validId, 'invalidToken')
-            ->willReturn('');
+            ->willThrowException(new InvalidTokenException());
 
         $this->view->expects($this->once())->method('send')
             ->with('401', ['error' => 'Unauthorized, no such token']);
