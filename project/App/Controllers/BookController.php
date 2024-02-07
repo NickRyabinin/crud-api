@@ -84,16 +84,19 @@ class BookController extends Controller
             $responseCode = '400';
             $message = ['error' => 'Invalid ID'];
         } else {
-            $message = $this->book->destroy($id, $token);
-            if ($message === false) {
-                $responseCode = '404';
-                $message = ['error' => 'No record with such ID'];
-            } elseif ($message === '') {
-                $responseCode = '401';
-                $message = ['error' => 'Unauthorized, no such token'];
-            } else {
+            try {
+                $message = $this->book->destroy($id, $token);
                 $responseCode = '200';
                 $message = ['message' => "Done, book deleted successfully"];
+            } catch (InvalidIdException $e) {
+                $responseCode = '404';
+                $message = ['error' => 'No record with such ID'];
+            } catch (InvalidTokenException $e) {
+                $responseCode = '401';
+                $message = ['error' => 'Unauthorized, no such token'];
+            } catch (InvalidDataException $e) {
+                $responseCode = '400';
+                $message = ['error' => 'Invalid input data'];
             }
         }
         $this->view->send($responseCode, $message);
