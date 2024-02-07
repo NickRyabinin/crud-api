@@ -87,18 +87,23 @@ class Book extends Model
         return true;
     }
 
-    public function destroy(string $id, string $token): bool | string
+    public function destroy(string $id, string $token): bool
     {
         $hashedToken = base64_decode($token);
-        if ($this->checkId($id)) {
-            if ($this->checkToken($hashedToken)) {
-                $query = "DELETE FROM {$this->entity}s WHERE id= :id";
-                $stmt = $this->pdo->prepare($query);
-                $stmt->execute([':id' => $id]);
-                return true;
-            }
-            return '';
+        if (!$this->checkId($id)) {
+            throw new InvalidIdException();
         }
-        return false;
+        if (!$this->checkToken($hashedToken)) {
+            throw new InvalidTokenException();
+        }
+        $query = "DELETE FROM {$this->entity}s WHERE id= :id";
+        try {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            throw new InvalidDataException();
+        }
+        return true;
     }
 }
