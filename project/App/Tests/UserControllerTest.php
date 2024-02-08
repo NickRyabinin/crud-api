@@ -23,18 +23,23 @@ class UserControllerTest extends TestCase
         $this->controller = new UserController($this->user, $this->view, $this->helper);
     }
 
-    public function testCreate()
+    private function setupTest(string $id, $token = null, $inputData = null): void
     {
-        $this->helper->method('getId')->willReturn('');
-        $this->helper->method('getInputData')->willReturn([
-            'login' => 'Test Login', 'email' => 'Test@Email'
-        ]);
+        $this->helper->method('getId')->willReturn($id);
+        $this->helper->method('getToken')->willReturn($token);
+        $this->helper->method('getInputData')->willReturn($inputData);
         $this->helper->method('sanitize')->willReturnArgument(0);
         $this->helper->method('validate')->willReturnArgument(0);
+    }
 
-        $login = 'Test Login';
-        $email = 'Test@Email';
+    public function testCreate(): void
+    {
+        $data = ['login' => 'Test Login', 'email' => 'Test@Email'];
+        extract($data);
         $token = hash('sha256', $email . $login);
+
+        $this->setupTest('', $token, $data);
+
         $this->user->expects($this->once())->method('store')
             ->with(['login' => $login, 'email' => $email, 'hashed_token' => $token])
             ->willReturn(true);
@@ -48,17 +53,13 @@ class UserControllerTest extends TestCase
         $this->controller->create();
     }
 
-    public function testCreateWithInvalidData()
+    public function testCreateWithInvalidData(): void
     {
-        $login = 'Test Login';
-        $email = 'NotUnique@Email';
+        $data = ['login' => 'Test Login', 'email' => 'NotUnique@Email'];
+        extract($data);
         $token = hash('sha256', $email . $login);
-        $this->helper->method('getId')->willReturn('');
-        $this->helper->method('getInputData')->willReturn([
-            'login' => $login, 'email' => $email
-        ]);
-        $this->helper->method('sanitize')->willReturnArgument(0);
-        $this->helper->method('validate')->willReturnArgument(0);
+
+        $this->setupTest('', $token, $data);
 
         $this->user->expects($this->once())->method('store')
             ->with(['login' => $login, 'email' => $email, 'hashed_token' => $token])
@@ -72,9 +73,8 @@ class UserControllerTest extends TestCase
         $this->controller->create();
     }
 
-    public function testReadIndex()
+    public function testReadIndex(): void
     {
-        $this->helper->method('getId')->willReturn('');
         $date1 = date('YYYY-MM-DD HH:MM:SS');
         $date2 = date('YYYY-MM-DD HH:MM:SS');
         $data = [
@@ -89,15 +89,17 @@ class UserControllerTest extends TestCase
                 'created_at' => $date2
             ]
         ];
+
+        $this->setupTest('');
+
         $this->user->expects($this->once())->method('index')->willReturn($data);
         $this->view->expects($this->once())->method('send')->with('200', $data);
         $this->controller->read();
     }
 
-    public function testReadShow()
+    public function testReadShow(): void
     {
         $validId = (string)random_int(1, 10);
-        $this->helper->method('getId')->willReturn($validId);
         $date = date('YYYY-MM-DD HH:MM:SS');
         $data = [
             [
@@ -106,12 +108,15 @@ class UserControllerTest extends TestCase
                 'created_at' => $date
             ]
         ];
+
+        $this->setupTest($validId);
+
         $this->user->expects($this->once())->method('show')->willReturn($data);
         $this->view->expects($this->once())->method('send')->with('200', $data);
         $this->controller->read();
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $this->view->expects($this->once())->method('send')
             ->with('405', ['error' => 'Method not allowed']);
@@ -119,10 +124,9 @@ class UserControllerTest extends TestCase
         $this->controller->update();
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
-        $this->helper->method('getId')->willReturn('');
-        $this->helper->method('getToken')->willReturn('validToken');
+        $this->setupTest('', 'validToken');
 
         $this->user->expects($this->once())->method('destroy')
             ->with('validToken')
@@ -134,10 +138,9 @@ class UserControllerTest extends TestCase
         $this->controller->delete();
     }
 
-    public function testDeleteWithInvalidData()
+    public function testDeleteWithInvalidData(): void
     {
-        $this->helper->method('getId')->willReturn('invalidId');
-        $this->helper->method('getToken')->willReturn('validToken');
+        $this->setupTest('invalidId', 'validToken');
 
         $this->view->expects($this->once())->method('send')
             ->with('400', ['error' => 'Invalid input data']);
@@ -145,10 +148,9 @@ class UserControllerTest extends TestCase
         $this->controller->delete();
     }
 
-    public function testDeleteWithInvalidToken()
+    public function testDeleteWithInvalidToken(): void
     {
-        $this->helper->method('getId')->willReturn('');
-        $this->helper->method('getToken')->willReturn('invalidToken');
+        $this->setupTest('', 'invalidToken');
 
         $this->user->expects($this->once())->method('destroy')
             ->with('invalidToken')
