@@ -4,32 +4,17 @@ namespace App\Tests;
 
 use App\Controllers\UserController;
 use App\Models\User;
-use App\Views\View;
-use App\Core\Helper;
-use PHPUnit\Framework\TestCase;
 
-class UserControllerTest extends TestCase
+class UserControllerTest extends BaseControllerTestSetUp
 {
-    private Helper $helper;
-    private View $view;
     private User $user;
     private UserController $controller;
 
     protected function setUp(): void
     {
+        parent::setUp();
         $this->user = $this->createMock(User::class);
-        $this->view = $this->createMock(View::class);
-        $this->helper = $this->createMock(Helper::class);
         $this->controller = new UserController($this->user, $this->view, $this->helper);
-    }
-
-    private function setupTest(string $id, $token = null, $inputData = null): void
-    {
-        $this->helper->method('getId')->willReturn($id);
-        $this->helper->method('getToken')->willReturn($token);
-        $this->helper->method('getInputData')->willReturn($inputData);
-        $this->helper->method('sanitize')->willReturnArgument(0);
-        $this->helper->method('validate')->willReturnArgument(0);
     }
 
     public function testCreate(): void

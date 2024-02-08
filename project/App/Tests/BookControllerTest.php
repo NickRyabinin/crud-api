@@ -4,37 +4,22 @@ namespace App\Tests;
 
 use App\Controllers\BookController;
 use App\Models\Book;
-use App\Views\View;
-use App\Core\Helper;
 use App\Core\Exceptions\InvalidIdException;
 use App\Core\Exceptions\InvalidTokenException;
 use App\Core\Exceptions\InvalidDataException;
-use PHPUnit\Framework\TestCase;
 
-class BookControllerTest extends TestCase
+class BookControllerTest extends BaseControllerTestSetUp
 {
-    private Helper $helper;
-    private View $view;
     private Book $book;
     private BookController $controller;
     private string $validId;
 
     protected function setUp(): void
     {
+        parent::setUp();
         $this->book = $this->createMock(Book::class);
-        $this->view = $this->createMock(View::class);
-        $this->helper = $this->createMock(Helper::class);
         $this->controller = new BookController($this->book, $this->view, $this->helper);
         $this->validId = (string)random_int(1, 10);
-    }
-
-    private function setupTest(string $id, $token = null, $inputData = null): void
-    {
-        $this->helper->method('getId')->willReturn($id);
-        $this->helper->method('getToken')->willReturn($token);
-        $this->helper->method('getInputData')->willReturn($inputData);
-        $this->helper->method('sanitize')->willReturnArgument(0);
-        $this->helper->method('validate')->willReturnArgument(0);
     }
 
     public function testCreate(): void
