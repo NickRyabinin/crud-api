@@ -28,18 +28,25 @@ class BookControllerTest extends TestCase
         $this->validId = (string)random_int(1, 10);
     }
 
-    public function testCreate()
+    private function setupTest(string $id, $token = null, $inputData = null): void
     {
-        $this->helper->method('getId')->willReturn('');
-        $this->helper->method('getToken')->willReturn('validToken');
-        $this->helper->method('getInputData')->willReturn([
-            'title' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')
-        ]);
+        $this->helper->method('getId')->willReturn($id);
+        $this->helper->method('getToken')->willReturn($token);
+        $this->helper->method('getInputData')->willReturn($inputData);
         $this->helper->method('sanitize')->willReturnArgument(0);
         $this->helper->method('validate')->willReturnArgument(0);
+    }
+
+    public function testCreate(): void
+    {
+        $data = [
+            'title' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')
+        ];
+
+        $this->setupTest('', 'validToken', $data);
 
         $this->book->expects($this->once())->method('store')
-            ->with('validToken', ['title' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')])
+            ->with('validToken', $data)
             ->willReturn(true);
 
         $this->view->expects($this->once())->method('send')
@@ -48,18 +55,16 @@ class BookControllerTest extends TestCase
         $this->controller->create();
     }
 
-    public function testCreateWithInvalidToken()
+    public function testCreateWithInvalidToken(): void
     {
-        $this->helper->method('getId')->willReturn('');
-        $this->helper->method('getToken')->willReturn('invalidToken');
-        $this->helper->method('getInputData')->willReturn([
+        $data = [
             'title' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')
-        ]);
-        $this->helper->method('sanitize')->willReturnArgument(0);
-        $this->helper->method('validate')->willReturnArgument(0);
+        ];
+
+        $this->setupTest('', 'invalidToken', $data);
 
         $this->book->expects($this->once())->method('store')
-            ->with('invalidToken', ['title' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')])
+            ->with('invalidToken', $data)
             ->willThrowException(new InvalidTokenException());
 
         $this->view->expects($this->once())->method('send')
@@ -68,18 +73,16 @@ class BookControllerTest extends TestCase
         $this->controller->create();
     }
 
-    public function testCreateWithInvalidData()
+    public function testCreateWithInvalidData(): void
     {
-        $this->helper->method('getId')->willReturn('');
-        $this->helper->method('getToken')->willReturn('validToken');
-        $this->helper->method('getInputData')->willReturn([
+        $invalidData = [
             'label' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')
-        ]);
-        $this->helper->method('sanitize')->willReturnArgument(0);
-        $this->helper->method('validate')->willReturnArgument(0);
+        ];
+
+        $this->setupTest('', 'validToken', $invalidData);
 
         $this->book->expects($this->once())->method('store')
-            ->with('validToken', ['label' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')])
+            ->with('validToken', $invalidData)
             ->willThrowException(new InvalidDataException());
 
         $this->view->expects($this->once())->method('send')
@@ -88,9 +91,8 @@ class BookControllerTest extends TestCase
         $this->controller->create();
     }
 
-    public function testReadIndex()
+    public function testReadIndex(): void
     {
-        $this->helper->method('getId')->willReturn('');
         $year1 = rand(1000, 2024);
         $year2 = rand(1000, 2024);
         $date1 = date('YYYY-MM-DD HH:MM:SS');
@@ -111,14 +113,14 @@ class BookControllerTest extends TestCase
                 'created_at' => $date2
             ]
         ];
+        $this->setupTest('');
         $this->book->expects($this->once())->method('index')->willReturn($data);
         $this->view->expects($this->once())->method('send')->with('200', $data);
         $this->controller->read();
     }
 
-    public function testReadShow()
+    public function testReadShow(): void
     {
-        $this->helper->method('getId')->willReturn($this->validId);
         $year = rand(1000, 2024);
         $date = date('YYYY-MM-DD HH:MM:SS');
         $data = [
@@ -130,23 +132,21 @@ class BookControllerTest extends TestCase
                 'created_at' => $date
             ]
         ];
+        $this->setupTest($this->validId);
         $this->book->expects($this->once())->method('show')->willReturn($data);
         $this->view->expects($this->once())->method('send')->with('200', $data);
         $this->controller->read();
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $data = [
             'title' => 'Updated Title',
             'author' => 'Updated Author',
             'published_at' => date('Y')
         ];
-        $this->helper->method('getId')->willReturn($this->validId);
-        $this->helper->method('getToken')->willReturn('validToken');
-        $this->helper->method('getInputData')->willReturn($data);
-        $this->helper->method('sanitize')->willReturnArgument(0);
-        $this->helper->method('validate')->willReturnArgument(0);
+
+        $this->setupTest($this->validId, 'validToken', $data);
 
         $this->book->expects($this->once())->method('update')
             ->with($this->validId, 'validToken', $data)
@@ -158,18 +158,15 @@ class BookControllerTest extends TestCase
         $this->controller->update();
     }
 
-    public function testUpdateWithUnexistedId()
+    public function testUpdateWithUnexistedId(): void
     {
         $data = [
             'title' => 'Updated Title',
             'author' => 'Updated Author',
             'published_at' => date('Y')
         ];
-        $this->helper->method('getId')->willReturn('unexistedId');
-        $this->helper->method('getToken')->willReturn('validToken');
-        $this->helper->method('getInputData')->willReturn($data);
-        $this->helper->method('sanitize')->willReturnArgument(0);
-        $this->helper->method('validate')->willReturnArgument(0);
+
+        $this->setupTest('unexistedId', 'validToken', $data);
 
         $this->book->expects($this->once())->method('update')
             ->with('unexistedId', 'validToken', $data)
@@ -181,18 +178,15 @@ class BookControllerTest extends TestCase
         $this->controller->update();
     }
 
-    public function testUpdateWithInvalidToken()
+    public function testUpdateWithInvalidToken(): void
     {
         $data = [
             'title' => 'Updated Title',
             'author' => 'Updated Author',
             'published_at' => date('Y')
         ];
-        $this->helper->method('getId')->willReturn($this->validId);
-        $this->helper->method('getToken')->willReturn('invalidToken');
-        $this->helper->method('getInputData')->willReturn($data);
-        $this->helper->method('sanitize')->willReturnArgument(0);
-        $this->helper->method('validate')->willReturnArgument(0);
+
+        $this->setupTest($this->validId, 'invalidToken', $data);
 
         $this->book->expects($this->once())->method('update')
             ->with($this->validId, 'invalidToken', $data)
@@ -204,18 +198,15 @@ class BookControllerTest extends TestCase
         $this->controller->update();
     }
 
-    public function testUpdateWithInvalidData()
+    public function testUpdateWithInvalidData(): void
     {
         $invalidData = [
             'label' => 'Updated Title',
             'author' => 'Updated Author',
             'published_at' => 'year'
         ];
-        $this->helper->method('getId')->willReturn($this->validId);
-        $this->helper->method('getToken')->willReturn('validToken');
-        $this->helper->method('getInputData')->willReturn($invalidData);
-        $this->helper->method('sanitize')->willReturnArgument(0);
-        $this->helper->method('validate')->willReturnArgument(0);
+
+        $this->setupTest($this->validId, 'validToken', $invalidData);
 
         $this->book->expects($this->once())->method('update')
             ->with($this->validId, 'validToken', $invalidData)
@@ -227,10 +218,9 @@ class BookControllerTest extends TestCase
         $this->controller->update();
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
-        $this->helper->method('getId')->willReturn($this->validId);
-        $this->helper->method('getToken')->willReturn('validToken');
+        $this->setupTest($this->validId, 'validToken');
 
         $this->book->expects($this->once())->method('destroy')
             ->with($this->validId, 'validToken')
@@ -242,10 +232,9 @@ class BookControllerTest extends TestCase
         $this->controller->delete();
     }
 
-    public function testDeleteWithUnexistedId()
+    public function testDeleteWithUnexistedId(): void
     {
-        $this->helper->method('getId')->willReturn('unexistedId');
-        $this->helper->method('getToken')->willReturn('validToken');
+        $this->setupTest('unexistedId', 'validToken');
 
         $this->book->expects($this->once())->method('destroy')
             ->with('unexistedId', 'validToken')
@@ -257,10 +246,9 @@ class BookControllerTest extends TestCase
         $this->controller->delete();
     }
 
-    public function testDeleteWithInvalidToken()
+    public function testDeleteWithInvalidToken(): void
     {
-        $this->helper->method('getId')->willReturn($this->validId);
-        $this->helper->method('getToken')->willReturn('invalidToken');
+        $this->setupTest($this->validId, 'invalidToken');
 
         $this->book->expects($this->once())->method('destroy')
             ->with($this->validId, 'invalidToken')
