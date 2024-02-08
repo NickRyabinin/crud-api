@@ -60,14 +60,10 @@ class BookControllerTest extends BaseControllerTestSetUp
 
     public function testCreateWithInvalidData(): void
     {
-        $invalidData = [
-            'label' => 'Test Book', 'author' => 'Test Author', 'published_at' => date('Y')
-        ];
-
-        $this->setupTest('', 'validToken', $invalidData);
+        $this->setupTest('', 'validToken', []);
 
         $this->book->expects($this->once())->method('store')
-            ->with('validToken', $invalidData)
+            ->with('validToken', [])
             ->willThrowException(new InvalidDataException());
 
         $this->view->expects($this->once())->method('send')
