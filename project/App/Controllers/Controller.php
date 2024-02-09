@@ -16,25 +16,46 @@ abstract class Controller
     public function read()
     {
         $id = $this->helper->getId();
-        if ($id === '') {
-            $message = $this->model->index();
-            if ($message === []) {
-                $responseCode = '404';
-                $message = ['error' => 'No records'];
-            } else {
-                $responseCode = '200';
-            }
-        } elseif ($id === false) {
-            $responseCode = '400';
-            $message = ['error' => 'Invalid ID'];
+        switch ($id) {
+            case '':
+                $this->handleEmptyId();
+                break;
+            case false:
+                $this->handleInvalidId();
+                break;
+            default:
+                $this->handleValidId($id);
+                break;
+        }
+    }
+
+    private function handleEmptyId()
+    {
+        $message = $this->model->index();
+        if ($message === []) {
+            $responseCode = '404';
+            $message = ['error' => 'No records'];
         } else {
-            $message = $this->model->show($id);
-            if ($message === false) {
-                $responseCode = '404';
-                $message = ['error' => 'No record with such ID'];
-            } else {
-                $responseCode = '200';
-            }
+            $responseCode = '200';
+        }
+        $this->view->send($responseCode, $message);
+    }
+
+    private function handleInvalidId()
+    {
+        $responseCode = '400';
+        $message = ['error' => 'Invalid ID'];
+        $this->view->send($responseCode, $message);
+    }
+
+    private function handleValidId($id)
+    {
+        $message = $this->model->show($id);
+        if ($message === false) {
+            $responseCode = '404';
+            $message = ['error' => 'No record with such ID'];
+        } else {
+            $responseCode = '200';
         }
         $this->view->send($responseCode, $message);
     }
