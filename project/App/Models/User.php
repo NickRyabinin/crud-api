@@ -36,7 +36,11 @@ class User extends Model
         $query = "SELECT id, login, created_at FROM {$this->entity}s";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $result = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result[] = $row;
+        }
+        return $result;
     }
 
     public function show($id)
