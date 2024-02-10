@@ -52,7 +52,7 @@ class Book extends Model
         return $result;
     }
 
-    public function show(string $id): array
+    public function show(string $id): array | bool
     {
         $query = "SELECT * FROM {$this->entity}s WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
