@@ -7,7 +7,7 @@ abstract class Model
     protected $pdo;
     protected $entity;
 
-    protected function checkId($id)
+    protected function checkId(string $id): bool
     {
         $query = "SELECT EXISTS (SELECT id FROM {$this->entity}s WHERE id = :id) AS isExists";
         $stmt = $this->pdo->prepare($query);
@@ -15,7 +15,7 @@ abstract class Model
         return (($stmt->fetch())['isExists'] === 0) ? false : true;
     }
 
-    protected function checkToken($hashedToken)
+    protected function checkToken(string $hashedToken): bool
     {
         $query = "SELECT EXISTS (SELECT id FROM users WHERE hashed_token = :hashed_token) AS isExists";
         $stmt = $this->pdo->prepare($query);

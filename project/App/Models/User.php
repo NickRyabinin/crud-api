@@ -13,7 +13,7 @@ class User extends Model
         $this->pdo = $pdo;
     }
 
-    public function store($data)
+    public function store(array $data): bool
     {
         if ($this->compare($this->properties, $data)) {
             try {
@@ -31,7 +31,7 @@ class User extends Model
         return false;
     }
 
-    public function index()
+    public function index(): array
     {
         $query = "SELECT id, login, created_at FROM {$this->entity}s";
         $stmt = $this->pdo->prepare($query);
@@ -43,7 +43,7 @@ class User extends Model
         return $result;
     }
 
-    public function show($id)
+    public function show(string $id): array | bool
     {
         $query = "SELECT id, login, created_at FROM {$this->entity}s WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
@@ -51,7 +51,7 @@ class User extends Model
         return $stmt->fetch();
     }
 
-    public function destroy($token)
+    public function destroy(string $token): bool
     {
         $hashedToken = base64_decode($token);
         if ($this->checkToken($hashedToken)) {
