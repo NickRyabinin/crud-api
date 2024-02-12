@@ -47,7 +47,7 @@ class UserController extends Controller
 
     public function update()
     {
-        return $this->invalidMethod();
+        return parent::handleInvalidMethod();
     }
 
     public function delete()

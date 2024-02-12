@@ -40,7 +40,7 @@ class Router
                 $controller->delete();
                 break;
             default:
-                $controller->invalidMethod();
+                $controller->handleInvalidMethod();
                 break;
         }
     }
