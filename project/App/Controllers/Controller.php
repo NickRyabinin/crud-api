@@ -13,7 +13,7 @@ abstract class Controller
         $this->model = $model;
     }
 
-    public function read()
+    public function read(): void
     {
         $id = $this->helper->getId();
         switch ($id) {
@@ -29,67 +29,69 @@ abstract class Controller
         }
     }
 
-    private function handleEmptyId()
+    private function handleEmptyId(): void
     {
         $message = $this->model->index();
         if ($message === []) {
             $this->handleNoRecords();
+            return;
         }
         $this->handleOk($message);
     }
 
-    private function handleValidId($id)
+    private function handleValidId(string $id): void
     {
         $message = $this->model->show($id);
         if ($message === false) {
             $this->handleNoRecord();
+            return;
         }
         $this->handleOk($message);
     }
 
-    public function handleInvalidId()
+    public function handleInvalidId(): void
     {
         $responseCode = '400';
         $message = ['error' => 'Invalid ID'];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleInvalidMethod()
+    public function handleInvalidMethod(): void
     {
         $responseCode = '405';
         $message = ['error' => 'Method not allowed'];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleInvalidData()
+    public function handleInvalidData(): void
     {
         $responseCode = '400';
         $message = ['error' => 'Invalid input data'];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleInvalidToken()
+    public function handleInvalidToken(): void
     {
         $responseCode = '401';
         $message = ['error' => 'Unauthorized, no such token'];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleNoRecord()
+    public function handleNoRecord(): void
     {
         $responseCode = '404';
         $message = ['error' => 'No record with such ID'];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleNoRecords()
+    public function handleNoRecords(): void
     {
         $responseCode = '404';
         $message = ['error' => 'No records'];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleOk($message)
+    public function handleOk(array $message): void
     {
         $responseCode = '200';
         $this->view->send($responseCode, $message);
