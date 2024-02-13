@@ -27,25 +27,23 @@ class BookController extends Controller
     {
         $id = $this->helper->getId();
         $token = $this->helper->getToken();
-        if ($id !== '') {
-            $responseCode = '400';
-            $message = ['error' => 'Invalid input data'];
-        } else {
+        if ($id === '') {
             $inputData = $this->helper->getInputData();
             $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
             try {
                 $message = $this->book->store($token, $cleanData);
                 $responseCode = '201';
                 $message = ['message' => "Done, book added successfully"];
+                $this->view->send($responseCode, $message);
             } catch (InvalidTokenException $e) {
-                $responseCode = '401';
-                $message = ['error' => 'Unauthorized, no such token'];
+                parent::handleInvalidToken();
             } catch (InvalidDataException $e) {
-                $responseCode = '400';
-                $message = ['error' => 'Invalid input data'];
+                parent::handleInvalidData();
+            } finally {
+                return;
             }
         }
-        $this->view->send($responseCode, $message);
+        parent::handleInvalidData();
     }
 
     public function update()
