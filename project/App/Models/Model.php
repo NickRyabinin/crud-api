@@ -5,7 +5,12 @@ namespace App\Models;
 abstract class Model
 {
     protected $pdo;
-    protected $entity;
+    public $entity;
+
+    public function __toString()
+    {
+        return $this->entity;
+    }
 
     protected function checkId(string $id): bool
     {

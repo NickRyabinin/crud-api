@@ -8,7 +8,7 @@ use App\Core\Exceptions\InvalidDataException;
 
 class Book extends Model
 {
-    protected $entity = 'book';
+    public $entity = 'book';
     protected $properties = ['title', 'author', 'published_at'];
     protected $pdo;
 

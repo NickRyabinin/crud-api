@@ -4,7 +4,7 @@ namespace App\Models;
 
 class User extends Model
 {
-    protected $entity = 'user';
+    public $entity = 'user';
     protected $properties = ['login', 'email', 'hashed_token'];
     protected $pdo;
 
