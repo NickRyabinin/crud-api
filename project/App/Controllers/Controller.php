@@ -96,4 +96,11 @@ abstract class Controller
         $responseCode = '200';
         $this->view->send($responseCode, $message);
     }
+
+    public function handleCreatedOk(): void
+    {
+        $responseCode = '201';
+        $message = ['message' => "Done, {$this->model} added successfully"];
+        $this->view->send($responseCode, $message);
+    }
 }
