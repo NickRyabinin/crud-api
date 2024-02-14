@@ -18,6 +18,7 @@ class BookControllerTest extends BaseControllerTestSetUp
     {
         parent::setUp();
         $this->book = $this->createMock(Book::class);
+        $this->book->method('__toString')->willReturn('book');
         $this->controller = new BookController($this->book, $this->view, $this->helper);
         $this->validId = (string)random_int(1, 10);
     }
