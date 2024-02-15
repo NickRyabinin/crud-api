@@ -48,27 +48,21 @@ class BookController extends Controller
         $id = $this->helper->getId();
         $token = $this->helper->getToken();
         if ($id === '' || $id === false) {
-            $responseCode = '400';
-            $message = ['error' => 'Invalid ID'];
-        } else {
-            $inputData = $this->helper->getInputData();
-            $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
-            try {
-                $message = $this->book->update($id, $token, $cleanData);
-                $responseCode = '200';
-                $message = ['message' => "Done, book updated successfully"];
-            } catch (InvalidIdException $e) {
-                $responseCode = '404';
-                $message = ['error' => 'No record with such ID'];
-            } catch (InvalidTokenException $e) {
-                $responseCode = '401';
-                $message = ['error' => 'Unauthorized, no such token'];
-            } catch (InvalidDataException $e) {
-                $responseCode = '400';
-                $message = ['error' => 'Invalid input data'];
-            }
+            parent::handleInvalidId();
+            return;
         }
-        $this->view->send($responseCode, $message);
+        $inputData = $this->helper->getInputData();
+        $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
+        try {
+            $this->book->update($id, $token, $cleanData);
+            parent::handleUpdatedOk();
+        } catch (InvalidIdException $e) {
+            parent::handleNoRecord();
+        } catch (InvalidTokenException $e) {
+            parent::handleInvalidToken();
+        } catch (InvalidDataException $e) {
+            parent::handleInvalidData();
+        }
     }
 
     public function delete()
