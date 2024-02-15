@@ -103,4 +103,11 @@ abstract class Controller
         $message = ['message' => "Done, {$this->model} added successfully"];
         $this->view->send($responseCode, $message);
     }
+
+    public function handleUpdatedOk(): void
+    {
+        $responseCode = '200';
+        $message = ['message' => "Done, {$this->model} updated successfully"];
+        $this->view->send($responseCode, $message);
+    }
 }
