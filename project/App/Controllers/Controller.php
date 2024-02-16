@@ -110,4 +110,11 @@ abstract class Controller
         $message = ['message' => "Done, {$this->model} updated successfully"];
         $this->view->send($responseCode, $message);
     }
+
+    public function handleDeletedOk(): void
+    {
+        $responseCode = '200';
+        $message = ['message' => "Done, {$this->model} deleted successfully"];
+        $this->view->send($responseCode, $message);
+    }
 }
