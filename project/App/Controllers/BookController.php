@@ -23,7 +23,7 @@ class BookController extends Controller
         $this->helper = $helper;
     }
 
-    public function create()
+    public function create(): void
     {
         $id = $this->helper->getId();
         $token = $this->helper->getToken();
@@ -43,7 +43,7 @@ class BookController extends Controller
         }
     }
 
-    public function update()
+    public function update(): void
     {
         $id = $this->helper->getId();
         $token = $this->helper->getToken();
@@ -65,29 +65,23 @@ class BookController extends Controller
         }
     }
 
-    public function delete()
+    public function delete(): void
     {
         $id = $this->helper->getId();
         $token = $this->helper->getToken();
         if ($id === '' || $id === false) {
-            $responseCode = '400';
-            $message = ['error' => 'Invalid ID'];
-        } else {
-            try {
-                $message = $this->book->destroy($id, $token);
-                $responseCode = '200';
-                $message = ['message' => "Done, book deleted successfully"];
-            } catch (InvalidIdException $e) {
-                $responseCode = '404';
-                $message = ['error' => 'No record with such ID'];
-            } catch (InvalidTokenException $e) {
-                $responseCode = '401';
-                $message = ['error' => 'Unauthorized, no such token'];
-            } catch (InvalidDataException $e) {
-                $responseCode = '400';
-                $message = ['error' => 'Invalid input data'];
-            }
+            parent::handleInvalidId();
+            return;
         }
-        $this->view->send($responseCode, $message);
+        try {
+            $message = $this->book->destroy($id, $token);
+            parent::handleDeletedOk();
+        } catch (InvalidIdException $e) {
+            parent::handleNoRecord();
+        } catch (InvalidTokenException $e) {
+            parent::handleInvalidToken();
+        } catch (InvalidDataException $e) {
+            parent::handleInvalidData();
+        }
     }
 }
