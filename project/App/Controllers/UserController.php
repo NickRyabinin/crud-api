@@ -5,6 +5,8 @@ namespace App\Controllers;
 use App\Models\User;
 use App\Views\View;
 use App\Core\Helper;
+use App\Core\Exceptions\InvalidTokenException;
+use App\Core\Exceptions\InvalidDataException;
 
 class UserController extends Controller
 {
@@ -50,22 +52,21 @@ class UserController extends Controller
         return parent::handleInvalidMethod();
     }
 
-    public function delete()
+    public function delete(): void
     {
         $id = $this->helper->getId();
         $token = $this->helper->getToken();
-        $responseCode = '400';
-        $message = ['error' => 'Invalid input data'];
-        if ($id === '') {
-            $message = $this->user->destroy($token);
-            if ($message === false) {
-                $responseCode = '401';
-                $message = ['error' => 'Unauthorized, no such token'];
-            } else {
-                $responseCode = '200';
-                $message = ['message' => "Done, user deleted successfully"];
-            }
+        if ($id !== '') {
+            parent::handleInvalidData();
+            return;
         }
-        $this->view->send($responseCode, $message);
+        try {
+            $this->user->destroy($token);
+            parent::handleDeletedOk();
+        } catch (InvalidTokenException $e) {
+            parent::handleInvalidToken();
+        } catch (InvalidDataException $e) {
+            parent::handleInvalidData();
+        }
     }
 }
