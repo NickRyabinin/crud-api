@@ -74,7 +74,7 @@ class BookController extends Controller
             return;
         }
         try {
-            $message = $this->book->destroy($id, $token);
+            $this->book->destroy($id, $token);
             parent::handleDeletedOk();
         } catch (InvalidIdException $e) {
             parent::handleNoRecord();
