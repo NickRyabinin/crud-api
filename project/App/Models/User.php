@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Core\Exceptions\InvalidTokenException;
+use App\Core\Exceptions\InvalidDataException;
+
 class User extends Model
 {
     public $entity = 'user';
@@ -54,12 +57,17 @@ class User extends Model
     public function destroy(string $token): bool
     {
         $hashedToken = base64_decode($token);
-        if ($this->checkToken($hashedToken)) {
-            $query = "DELETE FROM {$this->entity}s WHERE hashed_token = :hashed_token";
-            $stmt = $this->pdo->prepare($query);
-            $stmt->execute([':hashed_token' => $hashedToken]);
-            return true;
+        if (!$this->checkToken($hashedToken)) {
+            throw new InvalidTokenException();
         }
-        return false;
+        $query = "DELETE FROM {$this->entity}s WHERE hashed_token = :hashed_token";
+        try {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->bindParam(":hashed_token", $$hashedToken);
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            throw new InvalidDataException();
+        }
+        return true;
     }
 }
