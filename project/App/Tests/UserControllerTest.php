@@ -4,6 +4,8 @@ namespace App\Tests;
 
 use App\Controllers\UserController;
 use App\Models\User;
+use App\Core\Exceptions\InvalidTokenException;
+use App\Core\Exceptions\InvalidDataException;
 
 class UserControllerTest extends BaseControllerTestSetUp
 {
@@ -14,6 +16,7 @@ class UserControllerTest extends BaseControllerTestSetUp
     {
         parent::setUp();
         $this->user = $this->createMock(User::class);
+        $this->user->method('__toString')->willReturn('user');
         $this->controller = new UserController($this->user, $this->view, $this->helper);
     }
 
@@ -139,7 +142,7 @@ class UserControllerTest extends BaseControllerTestSetUp
 
         $this->user->expects($this->once())->method('destroy')
             ->with('invalidToken')
-            ->willReturn(false);
+            ->willThrowException(new InvalidTokenException());
 
         $this->view->expects($this->once())->method('send')
             ->with('401', ['error' => 'Unauthorized, no such token']);
