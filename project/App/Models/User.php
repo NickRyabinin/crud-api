@@ -18,20 +18,21 @@ class User extends Model
 
     public function store(array $data): bool
     {
-        if ($this->compare($this->properties, $data)) {
-            try {
-                $query = "INSERT INTO {$this->entity}s (login, email, hashed_token)
-                    VALUES (:login, :email, :hashed_token)";
-                $stmt = $this->pdo->prepare($query);
-                foreach ($data as $key => $value) {
-                    $stmt->bindValue(":{$key}", $value);
-                }
-                $stmt->execute();
-                return true;
-            } catch (\PDOException $e) {
-            }
+        if (!$this->compare($this->properties, $data)) {
+            throw new InvalidDataException();
         }
-        return false;
+        $query = "INSERT INTO {$this->entity}s (login, email, hashed_token)
+                    VALUES (:login, :email, :hashed_token)";
+        try {
+            $stmt = $this->pdo->prepare($query);
+            foreach ($data as $key => $value) {
+                $stmt->bindValue(":{$key}", $value);
+            }
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            throw new InvalidDataException();
+        }
+        return true;
     }
 
     public function index(): array
