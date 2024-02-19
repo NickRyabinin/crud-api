@@ -104,6 +104,16 @@ abstract class Controller
         $this->view->send($responseCode, $message);
     }
 
+    public function handleUserCreatedOk(string $token): void
+    {
+        $responseCode = '201';
+        $message = [
+            'message' => "Done, user added successfully",
+            'token' => base64_encode($token)
+        ];
+        $this->view->send($responseCode, $message);
+    }
+
     public function handleUpdatedOk(): void
     {
         $responseCode = '200';
