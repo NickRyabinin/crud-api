@@ -51,7 +51,7 @@ class UserControllerTest extends BaseControllerTestSetUp
 
         $this->user->expects($this->once())->method('store')
             ->with(['login' => $login, 'email' => $email, 'hashed_token' => $token])
-            ->willReturn(false);
+            ->willThrowException(new InvalidDataException());
 
         $this->view->expects($this->once())->method('send')
             ->with('400', [
