@@ -25,26 +25,26 @@ class UserController extends Controller
     public function create()
     {
         $id = $this->helper->getId();
-        $responseCode = '400';
-        $message = ['error' => 'Invalid input data'];
-        if ($id === '') {
-            $inputData = $this->helper->getInputData();
-            $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
-            $login = $cleanData['login'] ?? '';
-            $email = $cleanData['email'] ?? '';
-            if ($login && $email) {
-                $token = hash('sha256', $email . $login);
-                $cleanData['hashed_token'] = $token;
-                if ($this->user->store($cleanData)) {
-                    $responseCode = '201';
-                    $message = [
-                        'message' => "Done, user added successfully",
-                        'token' => base64_encode($token)
-                    ];
-                }
-            }
+        if ($id !== '') {
+            parent::handleInvalidData();
+            return;
         }
-        $this->view->send($responseCode, $message);
+        $inputData = $this->helper->getInputData();
+        $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
+        $login = $cleanData['login'] ?? '';
+        $email = $cleanData['email'] ?? '';
+        if (!($login && $email)) {
+            parent::handleInvalidData();
+            return;
+        }
+        $token = hash('sha256', $email . $login);
+        $cleanData['hashed_token'] = $token;
+        try {
+            $this->user->store($cleanData);
+            parent::handleUserCreatedOk($token);
+        } catch (InvalidDataException $e) {
+            parent::handleInvalidData();
+        }
     }
 
     public function update()
