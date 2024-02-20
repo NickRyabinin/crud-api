@@ -25,6 +25,11 @@ class Router
         $controller = $this->getController($resource);
         $method = $this->helper->getHttpMethod();
 
+        $this->handleRequestMethod($controller, $method);
+    }
+
+    private function handleRequestMethod($controller, $method)
+    {
         switch ($method) {
             case 'GET':
                 $controller->read();
