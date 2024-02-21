@@ -3,56 +3,65 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="description" content="php crud api example - oop, mvc, rest">
+  <meta name="keywords" content="php, crud, api, mvc, rest">
+  <meta name="author" content="Николай Рябинин">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="Assets/Styles/style.css">
-  <title>PHP CRUD API</title>
+  <title>php crud api</title>
 </head>
 
-<body class="bg-green text-white">
-  <p><h4>POST /users/</h4> - CREATE</p>
-  <p>'Регистрация' пользователя - в ответ пользователь получает token, который требуется указывать в заголовке
+<body class="bg-green">
+  <section class="text-white">
+    <article class="content">
+      <p><h4>POST /users/</h4> - CREATE</p>
+      <p>'Регистрация' пользователя - в ответ пользователь получает token, который требуется указывать в заголовке
 
-  <pre>
+      <pre>
   Authorization: Bearer {token}
   </pre>
-  
-  при последующих обращениях к API (кроме GET запросов) для авторизации действий пользователя.</p>
-  <pre>
+
+      при последующих обращениях к API (кроме GET запросов) для авторизации действий пользователя.</p>
+      <pre>
   BODY - JSON {
                   "login": login,
                   "email": email
               }
   </pre>
-  <p>Все поля в BODY являются обязательными.</p>
-  <p><h4>GET /users/</h4> - READ</p>
-  <p><h4>GET /users/<span class="text-italic">{id}</span></h4> - READ <span class="text-italic">{id}</span></p>
-  <p><h4>PUT | PATCH /users/<span class="text-italic">{id}</span></h4> - method not allowed</p>
-  <p><h4>DELETE /users/</h4> - DELETE</p>
-  <p>Пользователь может удалить только себя, id не нужен.</p>
-  <hr>
-  <p><h4>POST /books/</h4> - CREATE</p>
-  <pre>
+      <p>Все поля в BODY являются обязательными.</p>
+      <p><h4>GET /users/</h4> - READ</p>
+      <p><h4>GET /users/<span class="text-italic">{id}</span></h4> - READ <span class="text-italic">{id}</span></p>
+      <p><h4>PUT | PATCH /users/<span class="text-italic">{id}</span></h4> - method not allowed</p>
+      <p><h4>DELETE /users/</h4> - DELETE</p>
+      <p>Пользователь может удалить только себя, id не нужен.</p>
+    </article>
+    <hr>
+    <article class="content">
+      <p><h4>POST /books/</h4> - CREATE</p>
+      <pre>
   BODY - JSON {
                   "title": title,
                   "author": author,
                   "published_at": year
               }
   </pre>
-  <p>Все поля в BODY являются обязательными.</p>
-  <p><h4>GET /books/</h4> - READ</p>
-  <p><h4>GET /books/<span class="text-italic">{id}</span></h4> - READ <span class="text-italic">{id}</span></p>
-  <p><h4>PUT | PATCH /books/<span class="text-italic">{id}</span></h4> - UPDATE</p>
-  <pre>
+      <p>Все поля в BODY являются обязательными.</p>
+      <p><h4>GET /books/</h4> - READ</p>
+      <p><h4>GET /books/<span class="text-italic">{id}</span></h4> - READ <span class="text-italic">{id}</span></p>
+      <p><h4>PUT | PATCH /books/<span class="text-italic">{id}</span></h4> - UPDATE</p>
+      <pre>
   BODY - JSON {
                   "title": title,
                   "author": author,
                   "published_at": year
               }
   </pre>
-  <p>Параметр "id" является обязательным.
-    В BODY должно присутствовать минимум одно поле.</p>
-  <p><h4>DELETE /books/<span class="text-italic">{id}</span></h4> - DELETE</p>
-  <p>Параметр "id" является обязательным.</p>
+      <p>Параметр "id" является обязательным.
+        В BODY должно присутствовать минимум одно поле.</p>
+      <p><h4>DELETE /books/<span class="text-italic">{id}</span></h4> - DELETE</p>
+      <p>Параметр "id" является обязательным.</p>
+    </article>
+  </section>
 </body>
 
 </html>
