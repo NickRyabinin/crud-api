@@ -62,12 +62,11 @@ class Book extends Model
 
     public function update(string $id, string $token, array $data): bool
     {
-        $hashedToken = base64_decode($token);
         $filteredData = array_intersect_key($data, array_flip($this->properties));
         if (!$this->checkId($id)) {
             throw new InvalidIdException();
         }
-        if (!$this->checkToken($hashedToken)) {
+        if (!$this->checkToken(base64_decode($token))) {
             throw new InvalidTokenException();
         }
         if (count($filteredData) === 0) {
@@ -77,14 +76,13 @@ class Book extends Model
         foreach ($filteredData as $key => $value) {
             $query = $query . " {$key} = :{$key},";
         }
-        $query = substr($query, 0, -1) . " WHERE id = :id";
+        $query = rtrim($query, ',') . " WHERE id = :id";
         try {
             $stmt = $this->pdo->prepare($query);
-            $stmt->bindParam(":id", $id);
             foreach ($filteredData as $key => $value) {
                 $stmt->bindValue(":{$key}", $value);
             }
-            $stmt->execute();
+            $stmt->execute([':id' => $id]);
         } catch (\PDOException $e) {
             throw new InvalidDataException();
         }
