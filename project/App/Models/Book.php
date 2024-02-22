@@ -82,7 +82,8 @@ class Book extends Model
             foreach ($filteredData as $key => $value) {
                 $stmt->bindValue(":{$key}", $value);
             }
-            $stmt->execute([':id' => $id]);
+            $stmt->bindValue(":id", $id);
+            $stmt->execute();
         } catch (\PDOException $e) {
             throw new InvalidDataException();
         }
