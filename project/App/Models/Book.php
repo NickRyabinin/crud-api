@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Core\Exceptions\InvalidIdException;
 use App\Core\Exceptions\InvalidTokenException;
 use App\Core\Exceptions\InvalidDataException;
 
@@ -19,13 +18,10 @@ class Book extends Model
 
     public function store(string $token, array $data): bool
     {
-        $hashedToken = base64_decode($token);
         if (!$this->compare($this->properties, $data)) {
             throw new InvalidDataException();
         }
-        if (!$this->checkToken($hashedToken)) {
-            throw new InvalidTokenException();
-        }
+        $this->checkToken($token);
         $query = "INSERT INTO {$this->entity}s (title, author, published_at)
             VALUES (:title, :author, :published_at)";
         try {
@@ -63,12 +59,8 @@ class Book extends Model
     public function update(string $id, string $token, array $data): bool
     {
         $filteredData = array_intersect_key($data, array_flip($this->properties));
-        if (!$this->checkId($id)) {
-            throw new InvalidIdException();
-        }
-        if (!$this->checkToken(base64_decode($token))) {
-            throw new InvalidTokenException();
-        }
+        $this->checkId($id);
+        $this->checkToken($token);
         if (count($filteredData) === 0) {
             throw new InvalidDataException();
         }
@@ -92,13 +84,8 @@ class Book extends Model
 
     public function destroy(string $id, string $token): bool
     {
-        $hashedToken = base64_decode($token);
-        if (!$this->checkId($id)) {
-            throw new InvalidIdException();
-        }
-        if (!$this->checkToken($hashedToken)) {
-            throw new InvalidTokenException();
-        }
+        $this->checkId($id);
+        $this->checkToken($token);
         $query = "DELETE FROM {$this->entity}s WHERE id= :id";
         try {
             $stmt = $this->pdo->prepare($query);
