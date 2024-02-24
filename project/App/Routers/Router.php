@@ -30,24 +30,13 @@ class Router
 
     private function handleRequestMethod($controller, $method)
     {
-        switch ($method) {
-            case 'GET':
-                $controller->read();
-                break;
-            case 'POST':
-                $controller->create();
-                break;
-            case 'PUT':
-            case 'PATCH':
-                $controller->update();
-                break;
-            case 'DELETE':
-                $controller->delete();
-                break;
-            default:
-                $controller->handleInvalidMethod();
-                break;
-        }
+        match ($method) {
+            'GET' => $controller->read(),
+            'POST' => $controller->create(),
+            'PUT', 'PATCH' => $controller->update(),
+            'DELETE' => $controller->delete(),
+            default => $controller->handleInvalidMethod()
+        };
     }
 
     private function getController(string $resource)
