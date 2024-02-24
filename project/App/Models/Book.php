@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use App\Core\Exceptions\InvalidTokenException;
 use App\Core\Exceptions\InvalidDataException;
 
 class Book extends Model
 {
-    public $entity = 'book';
-    protected $properties = ['title', 'author', 'published_at'];
-    protected $pdo;
+    public string $entity = 'book';
+    protected array $properties = ['title', 'author', 'published_at'];
+    protected \PDO $pdo;
 
     public function __construct(\PDO $pdo)
     {
@@ -18,10 +17,8 @@ class Book extends Model
 
     public function store(string $token, array $data): bool
     {
-        if (!$this->compare($this->properties, $data)) {
-            throw new InvalidDataException();
-        }
-        $this->checkToken($token);
+        parent::compare($this->properties, $data);
+        parent::checkToken($token);
         $query = "INSERT INTO {$this->entity}s (title, author, published_at)
             VALUES (:title, :author, :published_at)";
         try {
@@ -59,8 +56,8 @@ class Book extends Model
     public function update(string $id, string $token, array $data): bool
     {
         $filteredData = array_intersect_key($data, array_flip($this->properties));
-        $this->checkId($id);
-        $this->checkToken($token);
+        parent::checkId($id);
+        parent::checkToken($token);
         if (count($filteredData) === 0) {
             throw new InvalidDataException();
         }
@@ -84,8 +81,8 @@ class Book extends Model
 
     public function destroy(string $id, string $token): bool
     {
-        $this->checkId($id);
-        $this->checkToken($token);
+        parent::checkId($id);
+        parent::checkToken($token);
         $query = "DELETE FROM {$this->entity}s WHERE id= :id";
         try {
             $stmt = $this->pdo->prepare($query);
