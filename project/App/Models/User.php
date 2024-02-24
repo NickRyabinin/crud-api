@@ -6,9 +6,9 @@ use App\Core\Exceptions\InvalidDataException;
 
 class User extends Model
 {
-    public $entity = 'user';
-    protected $properties = ['login', 'email', 'hashed_token'];
-    protected $pdo;
+    public string $entity = 'user';
+    protected array $properties = ['login', 'email', 'hashed_token'];
+    protected \PDO $pdo;
 
     public function __construct(\PDO $pdo)
     {
@@ -17,9 +17,7 @@ class User extends Model
 
     public function store(array $data): bool
     {
-        if (!$this->compare($this->properties, $data)) {
-            throw new InvalidDataException();
-        }
+        parent::compare($this->properties, $data);
         $query = "INSERT INTO {$this->entity}s (login, email, hashed_token)
                     VALUES (:login, :email, :hashed_token)";
         try {
@@ -56,7 +54,7 @@ class User extends Model
 
     public function destroy(string $token): bool
     {
-        $this->checkToken($token);
+        parent::checkToken($token);
         $query = "DELETE FROM {$this->entity}s WHERE hashed_token = :hashed_token";
         try {
             $stmt = $this->pdo->prepare($query);
