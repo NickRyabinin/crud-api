@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Core\Exceptions\InvalidIdException;
 use App\Core\Exceptions\InvalidTokenException;
+use App\Core\Exceptions\InvalidDataException;
 
 abstract class Model
 {
-    protected $pdo;
-    public $entity;
+    protected \PDO $pdo;
+    public string $entity;
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->entity;
     }
@@ -36,8 +37,10 @@ abstract class Model
         }
     }
 
-    protected function compare(array $properties, array $input): bool
+    protected function compare(array $properties, array $input): void
     {
-        return (count($properties) === count($input) && array_diff($properties, array_keys($input)) === []);
+        if (!(count($properties) === count($input) && array_diff($properties, array_keys($input)) === [])) {
+            throw new InvalidDataException();
+        };
     }
 }
