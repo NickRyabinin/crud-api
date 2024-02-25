@@ -6,7 +6,7 @@ use App\Core\Container;
 
 class Router
 {
-    private $container;
+    private Container $container;
     private $helper;
 
     public function __construct(Container $container)
@@ -15,7 +15,7 @@ class Router
         $this->helper = $this->container->get('helper');
     }
 
-    public function route()
+    public function route(): void
     {
         $resource = $this->helper->getResource();
         if ($resource === '') {
@@ -28,7 +28,7 @@ class Router
         $this->handleRequestMethod($controller, $method);
     }
 
-    private function handleRequestMethod($controller, $method)
+    private function handleRequestMethod($controller, string $method): void
     {
         match ($method) {
             'GET' => $controller->read(),
