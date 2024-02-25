@@ -26,15 +26,16 @@ class Helper
 
     public function getResource(): string
     {
-        return $this->sanitize($this->validate($this->getRequest()[0]));
+        $resource = isset($this->getRequest()[2]) ? $this->getRequest()[2] : $this->getRequest()[0];
+        return $this->sanitize($this->validate($resource));
     }
 
-    public function getInputData()
+    public function getInputData(): array
     {
         return json_decode(file_get_contents('php://input'), true) ?? [];
     }
 
-    public function getToken()
+    public function getToken(): string
     {
         $headers = getallheaders();
         if (isset($headers['Authorization'])) {
