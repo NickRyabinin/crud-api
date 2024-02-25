@@ -17,7 +17,7 @@ class BaseControllerTestSetUp extends TestCase
         $this->helper = $this->createMock(Helper::class);
     }
 
-    protected function setupTest(string $id, $token = null, $inputData = null): void
+    protected function setupTest(string $id, string $token = '', array $inputData = []): void
     {
         $this->helper->method('getId')->willReturn($id);
         $this->helper->method('getToken')->willReturn($token);
