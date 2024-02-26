@@ -13,9 +13,11 @@ use App\Core\Helper;
 use App\Routers\Router;
 use App\Models\Book;
 use App\Models\User;
+use App\Models\Opinion;
 use App\Controllers\BookController;
 use App\Controllers\UserController;
 use App\Controllers\HomeController;
+use App\Controllers\OpinionController;
 use App\Views\View;
 use App\Views\HomeView;
 
@@ -30,6 +32,7 @@ $container->set('pdo', $pdo);
 $container->set('helper', new Helper());
 $container->set('book', new Book($container->get('pdo')));
 $container->set('user', new User($container->get('pdo')));
+$container->set('opinion', new Opinion($container->get('pdo')));
 $container->set('View', new View());
 $container->set('homeView', new HomeView());
 $container->set('bookController', new BookController(
@@ -44,6 +47,13 @@ $container->set('userController', new UserController(
 ));
 $container->set('homeController', new HomeController(
     $container->get('homeView')
+));
+$container->set('opinionController', new OpinionController(
+    $container->get('opinion'),
+    $container->get('book'),
+    $container->get('user'),
+    $container->get('View'),
+    $container->get('helper')
 ));
 
 $router = new Router($container);
