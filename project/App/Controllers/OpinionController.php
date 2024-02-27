@@ -28,4 +28,26 @@ class OpinionController extends Controller
         $this->view = $view;
         $this->helper = $helper;
     }
+
+    public function create(): void
+    {
+        $parentId = $this->helper->getId();
+        $childId = $this->helper->getId('nested');
+        $token = $this->helper->getToken();
+        if ($childId !== '' && !$parentId) {
+            parent::handleInvalidData();
+            return;
+        }
+        $inputData = $this->helper->getInputData();
+        $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
+        $cleanData['book_id'] = $parentId;
+        try {
+            $this->opinion->store($token, $cleanData);
+            parent::handleCreatedOk();
+        } catch (InvalidTokenException $e) {
+            parent::handleInvalidToken();
+        } catch (InvalidDataException $e) {
+            parent::handleInvalidData();
+        }
+    }
 }
