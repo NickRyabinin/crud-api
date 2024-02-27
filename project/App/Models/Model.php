@@ -43,4 +43,20 @@ abstract class Model
             throw new InvalidDataException();
         };
     }
+
+    protected function get(string $model, string $field, string $conditionKey, string $conditionValue)
+    {
+        if ($conditionKey === 'token') {
+            $conditionKey = 'hashed_token';
+            $conditionValue = base64_decode($conditionValue);
+        }
+        $query = "SELECT {$field} AS 'result' FROM {$model}s WHERE {$conditionKey} = :{$conditionKey}";
+        try {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute([":{$conditionKey}" => $conditionValue]);
+        } catch (\PDOException $e) {
+            throw new InvalidDataException();
+        }
+        return $stmt->fetch(\PDO::FETCH_ASSOC)['result'];
+    }
 }
