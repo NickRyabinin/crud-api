@@ -9,12 +9,16 @@ class Helper
         return strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
-    public function getId(): string | bool
+    public function getId(string $nested = ''): string | bool
     {
         $request = $this->getRequest();
-        if (!empty($request[1])) {
-            $id = $this->sanitize($this->validate($request[1]));
-            return (is_numeric($id) && $id >= 0 && floor($id) == $id) ? $id : false;
+        if ($nested) {
+            $id = $request[3] ?? '';
+        } else {
+            $id = $request[1] ?? '';
+        }
+        if ($id !== '') {
+            return (preg_match('/^\d+$/', $id)) ? (string)$id : false;
         }
         return '';
     }
