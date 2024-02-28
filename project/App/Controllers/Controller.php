@@ -16,17 +16,11 @@ abstract class Controller
     public function read(): void
     {
         $id = $this->helper->getId();
-        switch ($id) {
-            case '':
-                $this->handleEmptyId();
-                break;
-            case false:
-                $this->handleInvalidId();
-                break;
-            default:
-                $this->handleValidId($id);
-                break;
-        }
+        match ($id) {
+            '' => $this->handleEmptyId(),
+            false => $this->handleInvalidId(),
+            default => $this->handleValidId($id)
+        };
     }
 
     private function handleEmptyId(): void
