@@ -23,9 +23,9 @@ abstract class Controller
         };
     }
 
-    protected function handleEmptyId(): void
+    protected function handleEmptyId(string $parentId = ''): void
     {
-        $message = $this->model->index();
+        $message = $this->model->index($parentId);
         if ($message === []) {
             $this->handleNoRecords();
             return;
@@ -33,9 +33,9 @@ abstract class Controller
         $this->handleOk($message);
     }
 
-    protected function handleValidId(string $id): void
+    protected function handleValidId(string $parentId, string $childId = ''): void
     {
-        $message = $this->model->show($id);
+        $message = $this->model->show($parentId, $childId);
         if ($message === false) {
             $this->handleNoRecord();
             return;
@@ -119,6 +119,13 @@ abstract class Controller
     {
         $responseCode = '200';
         $message = ['message' => "Done, {$this->model} deleted successfully"];
+        $this->view->send($responseCode, $message);
+    }
+
+    protected function handleResourceNotFound(): void
+    {
+        $responseCode = '404';
+        $message = ['error' => 'Resource not found'];
         $this->view->send($responseCode, $message);
     }
 }
