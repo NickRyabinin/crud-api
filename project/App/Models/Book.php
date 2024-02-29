@@ -15,6 +15,26 @@ class Book extends Model
         $this->pdo = $pdo;
     }
 
+    public function index(): array
+    {
+        $query = "SELECT * FROM {$this->entity}s";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        $result = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result[] = $row;
+        }
+        return $result;
+    }
+
+    public function show(string $id): array | bool
+    {
+        $query = "SELECT * FROM {$this->entity}s WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch();
+    }
+
     public function store(string $token, array $data): bool
     {
         parent::compare($this->properties, $data);
