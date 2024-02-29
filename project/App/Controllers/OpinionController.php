@@ -14,35 +14,27 @@ use App\Models\Opinion;
 class OpinionController extends Controller
 {
     protected $opinion;
-    protected $book;
-    protected $user;
     protected $view;
     protected $helper;
 
-    public function __construct(Opinion $opinion, Book $book, User $user, View $view, Helper $helper)
+    public function __construct(Opinion $opinion, View $view, Helper $helper)
     {
         parent::__construct($opinion);
         $this->opinion = $opinion;
-        $this->book = $book;
-        $this->user = $user;
         $this->view = $view;
         $this->helper = $helper;
     }
 
     public function create(): void
     {
-        $parentId = $this->helper->getId();
-        $childId = $this->helper->getId('nested');
-        $token = $this->helper->getToken();
-        if ($childId !== '' && !$parentId) {
+        [$parentId, $childId, $token, $cleanInputData] = $this->getParams();
+        if ($childId !== '') {
             parent::handleInvalidData();
             return;
         }
-        $inputData = $this->helper->getInputData();
-        $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
-        $cleanData['book_id'] = $parentId;
+        $cleanInputData['book_id'] = $parentId;
         try {
-            $this->opinion->store($token, $cleanData);
+            $this->opinion->store($token, $cleanInputData);
             parent::handleCreatedOk();
         } catch (InvalidTokenException $e) {
             parent::handleInvalidToken();
@@ -53,11 +45,35 @@ class OpinionController extends Controller
 
     public function read(): void
     {
-        $id = $this->helper->getId('nested');
-        match ($id) {
-            '' => parent::handleEmptyId(),
+        [$parentId, $childId] = $this->getParams();
+        match ($childId) {
+            '' => parent::handleEmptyId($parentId),
             false => parent::handleInvalidId(),
-            default => parent::handleValidId($id)
+            default => parent::handleValidId($parentId, $childId)
         };
+    }
+
+    protected function getParams(): array
+    {
+        $parentResource = $this->helper->getResource('parent');
+        $parentId = $this->helper->getId();
+        $this->checkParentResource($parentResource, $parentId);
+        $childId = $this->helper->getId('nested');
+        $token = $this->helper->getToken();
+        $inputData = $this->helper->getInputData();
+        $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
+        return [$parentId, $childId, $token, $cleanData];
+    }
+
+    protected function checkParentResource(string $parentResource, string $parentId): void
+    {
+        if ($parentResource !== 'books') {
+            parent::handleResourceNotFound();
+            die();
+        }
+        if (!$parentId) {
+            parent::handleInvalidId();
+            die();
+        }
     }
 }
