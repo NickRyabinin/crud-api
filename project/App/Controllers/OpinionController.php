@@ -50,4 +50,14 @@ class OpinionController extends Controller
             parent::handleInvalidData();
         }
     }
+
+    public function read(): void
+    {
+        $id = $this->helper->getId('nested');
+        match ($id) {
+            '' => parent::handleEmptyId(),
+            false => parent::handleInvalidId(),
+            default => parent::handleValidId($id)
+        };
+    }
 }
