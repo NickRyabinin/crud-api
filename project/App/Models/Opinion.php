@@ -33,4 +33,24 @@ class Opinion extends Model
         }
         return true;
     }
+
+    public function index(string $parentId): array
+    {
+        $query = "SELECT * FROM {$this->entity}s WHERE book_id = :book_id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([':book_id' => $parentId]);
+        $result = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result[] = $row;
+        }
+        return $result;
+    }
+
+    public function show(string $parentId, string $childId): array | bool
+    {
+        $query = "SELECT * FROM {$this->entity}s WHERE book_id = :book_id AND id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([':book_id' => $parentId, ':id' => $childId]);
+        return $stmt->fetch();
+    }
 }
