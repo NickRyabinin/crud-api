@@ -28,9 +28,13 @@ class Helper
         return explode('/', trim($_SERVER['REQUEST_URI'], '/'));
     }
 
-    public function getResource(): string
+    public function getResource(string $parent = ''): string
     {
-        $resource = isset($this->getRequest()[2]) ? $this->getRequest()[2] : $this->getRequest()[0];
+        if ($parent) {
+            $resource = $this->getRequest()[0];
+        } else {
+            $resource = isset($this->getRequest()[2]) ? $this->getRequest()[2] : $this->getRequest()[0];
+        }
         return $this->sanitize($this->validate($resource));
     }
 
