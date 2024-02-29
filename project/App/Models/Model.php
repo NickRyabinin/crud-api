@@ -16,6 +16,26 @@ abstract class Model
         return $this->entity;
     }
 
+    public function index(): array
+    {
+        $query = "SELECT * FROM {$this->entity}s";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        $result = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result[] = $row;
+        }
+        return $result;
+    }
+
+    public function show(string $id): array | bool
+    {
+        $query = "SELECT * FROM {$this->entity}s WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch();
+    }
+
     protected function checkId(string $id): void
     {
         $query = "SELECT EXISTS (SELECT id FROM {$this->entity}s WHERE id = :id) AS isExists";
