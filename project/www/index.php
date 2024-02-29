@@ -50,8 +50,6 @@ $container->set('homeController', new HomeController(
 ));
 $container->set('opinionController', new OpinionController(
     $container->get('opinion'),
-    $container->get('book'),
-    $container->get('user'),
     $container->get('View'),
     $container->get('helper')
 ));
