@@ -23,7 +23,7 @@ abstract class Controller
         };
     }
 
-    private function handleEmptyId(): void
+    protected function handleEmptyId(): void
     {
         $message = $this->model->index();
         if ($message === []) {
@@ -33,7 +33,7 @@ abstract class Controller
         $this->handleOk($message);
     }
 
-    private function handleValidId(string $id): void
+    protected function handleValidId(string $id): void
     {
         $message = $this->model->show($id);
         if ($message === false) {
@@ -43,7 +43,7 @@ abstract class Controller
         $this->handleOk($message);
     }
 
-    public function handleInvalidId(): void
+    protected function handleInvalidId(): void
     {
         $responseCode = '400';
         $message = ['error' => 'Invalid ID'];
@@ -57,48 +57,48 @@ abstract class Controller
         $this->view->send($responseCode, $message);
     }
 
-    public function handleInvalidData(): void
+    protected function handleInvalidData(): void
     {
         $responseCode = '400';
         $message = ['error' => 'Invalid input data'];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleInvalidToken(): void
+    protected function handleInvalidToken(): void
     {
         $responseCode = '401';
         $message = ['error' => 'Unauthorized, no such token'];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleNoRecord(): void
+    protected function handleNoRecord(): void
     {
         $responseCode = '404';
         $message = ['error' => 'No record with such ID'];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleNoRecords(): void
+    protected function handleNoRecords(): void
     {
         $responseCode = '404';
         $message = ['error' => 'No records'];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleOk(array $message): void
+    protected function handleOk(array $message): void
     {
         $responseCode = '200';
         $this->view->send($responseCode, $message);
     }
 
-    public function handleCreatedOk(): void
+    protected function handleCreatedOk(): void
     {
         $responseCode = '201';
         $message = ['message' => "Done, {$this->model} added successfully"];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleUserCreatedOk(string $token): void
+    protected function handleUserCreatedOk(string $token): void
     {
         $responseCode = '201';
         $message = [
@@ -108,14 +108,14 @@ abstract class Controller
         $this->view->send($responseCode, $message);
     }
 
-    public function handleUpdatedOk(): void
+    protected function handleUpdatedOk(): void
     {
         $responseCode = '200';
         $message = ['message' => "Done, {$this->model} updated successfully"];
         $this->view->send($responseCode, $message);
     }
 
-    public function handleDeletedOk(): void
+    protected function handleDeletedOk(): void
     {
         $responseCode = '200';
         $message = ['message' => "Done, {$this->model} deleted successfully"];
