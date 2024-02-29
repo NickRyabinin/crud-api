@@ -33,26 +33,6 @@ class Book extends Model
         return true;
     }
 
-    public function index(): array
-    {
-        $query = "SELECT * FROM {$this->entity}s";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
-        $result = [];
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result[] = $row;
-        }
-        return $result;
-    }
-
-    public function show(string $id): array | bool
-    {
-        $query = "SELECT * FROM {$this->entity}s WHERE id = :id";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute([':id' => $id]);
-        return $stmt->fetch();
-    }
-
     public function update(string $id, string $token, array $data): bool
     {
         $filteredData = array_intersect_key($data, array_flip($this->properties));
