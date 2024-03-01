@@ -2,8 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\Book;
-use APP\Models\User;
 use App\Views\View;
 use App\Core\Helper;
 use App\Core\Exceptions\InvalidIdException;
@@ -32,10 +30,11 @@ class OpinionController extends Controller
             parent::handleInvalidData();
             return;
         }
-        $cleanInputData['book_id'] = $parentId;
         try {
-            $this->opinion->store($token, $cleanInputData);
+            $this->opinion->store($parentId, $token, $cleanInputData);
             parent::handleCreatedOk();
+        } catch (InvalidIdException $e) {
+            parent::handleResourceNotFound();
         } catch (InvalidTokenException $e) {
             parent::handleInvalidToken();
         } catch (InvalidDataException $e) {
@@ -53,6 +52,25 @@ class OpinionController extends Controller
         };
     }
 
+    public function delete(): void
+    {
+        [$parentId, $childId, $token] = $this->getParams();
+        if ($childId === '' || $childId === false) {
+            parent::handleInvalidId();
+            return;
+        }
+        try {
+            $this->opinion->destroy($parentId, $childId, $token);
+            parent::handleDeletedOk();
+        } catch (InvalidIdException $e) {
+            parent::handleNoRecord();
+        } catch (InvalidTokenException $e) {
+            parent::handleInvalidToken();
+        } catch (InvalidDataException $e) {
+            parent::handleInvalidData();
+        }
+    }
+
     protected function getParams(): array
     {
         $parentResource = $this->helper->getResource('parent');
@@ -67,7 +85,8 @@ class OpinionController extends Controller
 
     protected function checkParentResource(string $parentResource, string $parentId): void
     {
-        if ($parentResource !== 'books') {
+        $belongsTo = $this->opinion->belongsTo;
+        if (!in_array(rtrim($parentResource, 's'), $belongsTo)) {
             parent::handleResourceNotFound();
             die();
         }
