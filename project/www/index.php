@@ -32,7 +32,10 @@ $container->set('pdo', $pdo);
 $container->set('helper', new Helper());
 $container->set('book', new Book($container->get('pdo')));
 $container->set('user', new User($container->get('pdo')));
-$container->set('opinion', new Opinion($container->get('pdo')));
+$container->set('opinion', new Opinion(
+    $container->get('pdo'),
+    $container->get('book')
+));
 $container->set('View', new View());
 $container->set('homeView', new HomeView());
 $container->set('bookController', new BookController(
