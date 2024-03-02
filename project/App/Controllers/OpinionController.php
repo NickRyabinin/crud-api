@@ -52,6 +52,25 @@ class OpinionController extends Controller
         };
     }
 
+    public function update(): void
+    {
+        [$parentId, $childId, $token, $cleanInputData] = $this->getParams();
+        if ($childId === '' || $childId === false) {
+            parent::handleInvalidId();
+            return;
+        }
+        try {
+            $this->opinion->update($parentId, $childId, $token, $cleanInputData);
+            parent::handleUpdatedOk();
+        } catch (InvalidIdException $e) {
+            parent::handleResourceNotFound();
+        } catch (InvalidTokenException $e) {
+            parent::handleInvalidToken();
+        } catch (InvalidDataException $e) {
+            parent::handleInvalidData();
+        }
+    }
+
     public function delete(): void
     {
         [$parentId, $childId, $token] = $this->getParams();
