@@ -14,6 +14,7 @@
 <body class="bg-green">
   <section class="text-white">
     <article class="content">
+      <h3>Сущность "user":</h3>
       <p><h4>POST /users/</h4> - CREATE</p>
       <p>'Регистрация' пользователя - в ответ пользователь получает token, который требуется указывать в заголовке
 
@@ -37,6 +38,7 @@
     </article>
     <hr>
     <article class="content">
+      <h3>Сущность "book":</h3>
       <p><h4>POST /books/</h4> - CREATE</p>
       <pre>
   BODY - JSON {
@@ -60,6 +62,38 @@
         В BODY должно присутствовать минимум одно поле.</p>
       <p><h4>DELETE /books/<span class="text-italic">{id}</span></h4> - DELETE</p>
       <p>Параметр "id" является обязательным.</p>
+    </article>
+    <hr>
+    <article class="content">
+      <h3>Сущность "opinion", связанная с сущностью "book":</h3>
+      <p><h4>POST /books/<span class="text-italic">{book_id}</span>/opinions/</h4> - CREATE</p>
+      <pre>
+  BODY - JSON {
+                  "opinion": opinion
+              }
+  </pre>
+      <p>Поле "opinion" является обязательным.</p>
+      <p><h4>GET /books/<span class="text-italic">{book_id}</span>/opinions/</h4> - READ</p>
+      <p>
+        <h4>GET /books/<span class="text-italic">{book_id}</span>/opinions/<span class="text-italic">{opinion_id}</span>
+        </h4> - READ <span class="text-italic">{opinion_id}</span>
+      </p>
+      <p>
+        <h4>PUT | PATCH /books/<span class="text-italic">{book_id}</span>/opinions/<span class="text-italic">{opinion_id}</span>
+        </h4> - UPDATE
+      </p>
+      <pre>
+  BODY - JSON {
+                  "opinion": opinion
+              }
+  </pre>
+      <p>Параметры "book_id" и "opinion_id" являются обязательными.
+        В BODY должно присутствовать минимум одно поле.</p>
+      <p>
+        <h4>DELETE /books/<span class="text-italic">{book_id}</span>/opinions/<span class="text-italic">{opinion_id}</span>
+        </h4> - DELETE
+      </p>
+      <p>Параметры "book_id" и "opinion_id" являются обязательными.</p>
     </article>
   </section>
 </body>
