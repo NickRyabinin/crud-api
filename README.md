@@ -7,9 +7,11 @@
 
 Попытка в REST-like CRUD API по паттерну MVC в парадигме ООП :-)
 
-Пока реализован pre-MVP для сущностей 'user' и 'book'.
+Пока реализован pre-MVP для сущностей 'user', 'book' и сущности 'opinion', связанной с 'book' отношением many-to-one.
 
 Посмотреть, что получается, можно [тут](http://php-crud-api.alwaysdata.net/).
+
+### Эндпойнты для сущности 'user':
 
 #### POST /users/ - CREATE
 
@@ -44,6 +46,7 @@
 
 Пользователь может удалить только себя, id не нужен.
 
+### Эндпойнты для сущности 'book':
 
 #### POST /books/ - CREATE
 
@@ -80,3 +83,37 @@
 #### DELETE /books/*{id}* - DELETE
 
 Параметр "id" является обязательным.
+
+### Эндпойнты для сущности 'opinion', связанной с сущностью 'book':
+
+#### POST /books/*{book_id}*/opinions/ - CREATE
+
+  <pre>
+  BODY - JSON {
+                  "opinion": opinion
+              }
+  </pre>
+
+Поле "opinion" является обязательным.
+
+#### GET /books/*{book_id}*/opinions/ - READ
+
+
+#### GET /books/*{book_id}*/opinions/*{opinion_id}* - READ *{opinion_id}*
+
+
+#### PUT | PATCH /books/*{book_id}*/opinions/*{opinion_id}* - UPDATE
+
+  <pre>
+  BODY - JSON {
+                  "opinion": opinion
+              }
+  </pre>
+
+Параметры "book_id" и "opinion_id" являются обязательными.
+В BODY должно присутствовать минимум одно поле.
+
+
+#### DELETE /books/*{book_id}*/opinions/*{opinion_id}* - DELETE
+
+Параметры "book_id" и "opinion_id" являются обязательными.
