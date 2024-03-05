@@ -17,9 +17,12 @@ class BaseControllerTestSetUp extends TestCase
         $this->helper = $this->createMock(Helper::class);
     }
 
-    protected function setupTest(string $id, string $token = '', array $inputData = []): void
+    protected function setupTest(string $id, string $token = '', array $inputData = [], string $childId = ''): void
     {
-        $this->helper->method('getId')->willReturn($id);
+        $this->helper->method('getId')->willReturnMap([
+            ['', $id],
+            ['nested', $childId],
+        ]);
         $this->helper->method('getToken')->willReturn($token);
         $this->helper->method('getInputData')->willReturn($inputData);
         $this->helper->method('sanitize')->willReturnArgument(0);
