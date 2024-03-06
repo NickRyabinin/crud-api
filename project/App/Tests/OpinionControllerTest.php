@@ -28,7 +28,7 @@ class OpinionControllerTest extends BaseControllerTestSetUp
 
     public function testCreate(): void
     {
-        $this->opinion->belongsTo = ['book'];
+        // $this->opinion->belongsTo = ['book'];
         $data = [
             'opinion' => 'Test Opinion'
         ];
@@ -39,5 +39,30 @@ class OpinionControllerTest extends BaseControllerTestSetUp
         $this->view->expects($this->once())->method('send')
             ->with('201', ['message' => "Done, opinion added successfully"]);
         $this->controller->create();
+    }
+
+    public function testUpdate(): void
+    {
+        $data = [
+            'opinion' => 'Updated Opinion'
+        ];
+        $this->setupTest($this->validParentId, 'validToken', $data, $this->validChildId);
+        $this->opinion->expects($this->once())->method('update')
+            ->with($this->validParentId, $this->validChildId, 'validToken', $data)
+            ->willReturn(true);
+        $this->view->expects($this->once())->method('send')
+            ->with('200', ['message' => "Done, opinion updated successfully"]);
+        $this->controller->update();
+    }
+
+    public function testDelete(): void
+    {
+        $this->setupTest($this->validParentId, 'validToken', [], $this->validChildId);
+        $this->opinion->expects($this->once())->method('destroy')
+            ->with($this->validParentId, $this->validChildId, 'validToken')
+            ->willReturn(true);
+        $this->view->expects($this->once())->method('send')
+            ->with('200', ['message' => "Done, opinion deleted successfully"]);
+        $this->controller->delete();
     }
 }
