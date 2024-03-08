@@ -41,6 +41,48 @@ class OpinionControllerTest extends BaseControllerTestSetUp
         $this->controller->create();
     }
 
+    public function testCreateWithInvalidToken(): void
+    {
+        $data = [
+            'opinion' => 'Test Opinion'
+        ];
+        $this->setupTest($this->validParentId, 'invalidToken', $data, '');
+        $this->opinion->expects($this->once())->method('store')
+            ->with($this->validParentId, 'invalidToken', $data)
+            ->willThrowException(new InvalidTokenException());
+        $this->view->expects($this->once())->method('send')
+            ->with('401', ['error' => 'Unauthorized, no such token']);
+        $this->controller->create();
+    }
+
+    public function testCreateWithInvalidData(): void
+    {
+        $data = [
+            'comment' => 'Test Opinion'
+        ];
+        $this->setupTest($this->validParentId, 'validToken', $data, '');
+        $this->opinion->expects($this->once())->method('store')
+            ->with($this->validParentId, 'validToken', $data)
+            ->willThrowException(new InvalidDataException());
+        $this->view->expects($this->once())->method('send')
+            ->with('400', ['error' => 'Invalid input data']);
+        $this->controller->create();
+    }
+
+    public function testCreateWithInvalidParentId(): void
+    {
+        $data = [
+            'opinion' => 'Test Opinion'
+        ];
+        $this->setupTest('invalidParentId', 'validToken', $data, '');
+        $this->opinion->expects($this->once())->method('store')
+            ->with('invalidParentId', 'validToken', $data)
+            ->willThrowException(new InvalidIdException());
+        $this->view->expects($this->once())->method('send')
+            ->with('404', ['error' => 'Resource not found']);
+        $this->controller->create();
+    }
+
     public function testReadIndex(): void
     {
         $id1 = rand(1, 100);
