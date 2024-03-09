@@ -14,6 +14,7 @@ class OpinionControllerTest extends BaseControllerTestSetUp
     private OpinionController $controller;
     private string $validParentId;
     private string $validChildId;
+    private array $validData;
 
     protected function setUp(): void
     {
@@ -24,17 +25,15 @@ class OpinionControllerTest extends BaseControllerTestSetUp
         $this->controller = new OpinionController($this->opinion, $this->view, $this->helper);
         $this->validParentId = (string)random_int(1, 10);
         $this->validChildId = (string)random_int(1, 10);
+        $this->validData = ['opinion' => 'Test Opinion'];
     }
 
     public function testCreate(): void
     {
         // $this->opinion->belongsTo = ['book'];
-        $data = [
-            'opinion' => 'Test Opinion'
-        ];
-        $this->setupTest($this->validParentId, 'validToken', $data, '');
+        $this->setupTest($this->validParentId, 'validToken', $this->validData, '');
         $this->opinion->expects($this->once())->method('store')
-            ->with($this->validParentId, 'validToken', $data)
+            ->with($this->validParentId, 'validToken', $this->validData)
             ->willReturn(true);
         $this->view->expects($this->once())->method('send')
             ->with('201', ['message' => "Done, opinion added successfully"]);
@@ -43,12 +42,9 @@ class OpinionControllerTest extends BaseControllerTestSetUp
 
     public function testCreateWithInvalidToken(): void
     {
-        $data = [
-            'opinion' => 'Test Opinion'
-        ];
-        $this->setupTest($this->validParentId, 'invalidToken', $data, '');
+        $this->setupTest($this->validParentId, 'invalidToken', $this->validData, '');
         $this->opinion->expects($this->once())->method('store')
-            ->with($this->validParentId, 'invalidToken', $data)
+            ->with($this->validParentId, 'invalidToken', $this->validData)
             ->willThrowException(new InvalidTokenException());
         $this->view->expects($this->once())->method('send')
             ->with('401', ['error' => 'Unauthorized, no such token']);
@@ -71,12 +67,9 @@ class OpinionControllerTest extends BaseControllerTestSetUp
 
     public function testCreateWithInvalidParentId(): void
     {
-        $data = [
-            'opinion' => 'Test Opinion'
-        ];
-        $this->setupTest('invalidParentId', 'validToken', $data, '');
+        $this->setupTest('invalidParentId', 'validToken', $this->validData, '');
         $this->opinion->expects($this->once())->method('store')
-            ->with('invalidParentId', 'validToken', $data)
+            ->with('invalidParentId', 'validToken', $this->validData)
             ->willThrowException(new InvalidIdException());
         $this->view->expects($this->once())->method('send')
             ->with('404', ['error' => 'Resource not found']);
@@ -146,12 +139,53 @@ class OpinionControllerTest extends BaseControllerTestSetUp
 
     public function testDelete(): void
     {
-        $this->setupTest($this->validParentId, 'validToken', [], $this->validChildId);
+        $this->setupTest($this->validParentId, 'validToken', childId: $this->validChildId);
         $this->opinion->expects($this->once())->method('destroy')
             ->with($this->validParentId, $this->validChildId, 'validToken')
             ->willReturn(true);
         $this->view->expects($this->once())->method('send')
             ->with('200', ['message' => "Done, opinion deleted successfully"]);
+        $this->controller->delete();
+    }
+
+    public function testDeleteWithInvalidToken(): void
+    {
+        $this->setupTest($this->validParentId, 'invalidToken', childId: $this->validChildId);
+        $this->opinion->expects($this->once())->method('destroy')
+            ->with($this->validParentId, $this->validChildId, 'invalidToken')
+            ->willThrowException(new InvalidTokenException());
+        $this->view->expects($this->once())->method('send')
+            ->with('401', ['error' => 'Unauthorized, no such token']);
+        $this->controller->delete();
+    }
+
+    public function testDeleteWithInvalidParentId(): void
+    {
+        $this->setupTest('invalidParentId', 'validToken', childId: $this->validChildId);
+        $this->opinion->expects($this->once())->method('destroy')
+            ->with('invalidParentId', $this->validChildId, 'validToken')
+            ->willThrowException(new InvalidIdException());
+        $this->view->expects($this->once())->method('send')
+            ->with('404', ['error' => 'No record with such ID']);
+        $this->controller->delete();
+    }
+
+    public function testDeleteWithInvalidChildId(): void
+    {
+        $this->setupTest($this->validParentId, 'validToken', childId: false);
+        $this->view->expects($this->once())->method('send')
+            ->with('400', ['error' => 'Invalid ID']);
+        $this->controller->delete();
+    }
+
+    public function testDeleteWithPDOException(): void
+    {
+        $this->setupTest($this->validParentId, 'validToken', childId: $this->validChildId);
+        $this->opinion->expects($this->once())->method('destroy')
+            ->with($this->validParentId, $this->validChildId, 'validToken')
+            ->willThrowException(new InvalidDataException());
+        $this->view->expects($this->once())->method('send')
+            ->with('400', ['error' => 'Invalid input data']);
         $this->controller->delete();
     }
 }
