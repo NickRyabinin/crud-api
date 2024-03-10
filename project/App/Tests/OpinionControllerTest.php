@@ -125,15 +125,56 @@ class OpinionControllerTest extends BaseControllerTestSetUp
 
     public function testUpdate(): void
     {
+        $this->setupTest($this->validParentId, 'validToken', $this->validData, $this->validChildId);
+        $this->opinion->expects($this->once())->method('update')
+            ->with($this->validParentId, $this->validChildId, 'validToken', $this->validData)
+            ->willReturn(true);
+        $this->view->expects($this->once())->method('send')
+            ->with('200', ['message' => "Done, opinion updated successfully"]);
+        $this->controller->update();
+    }
+
+    public function testUpdateWithInvalidToken(): void
+    {
+        $this->setupTest($this->validParentId, 'invalidToken', $this->validData, $this->validChildId);
+        $this->opinion->expects($this->once())->method('update')
+            ->with($this->validParentId, $this->validChildId, 'invalidToken', $this->validData)
+            ->willThrowException(new InvalidTokenException());
+        $this->view->expects($this->once())->method('send')
+            ->with('401', ['error' => 'Unauthorized, no such token']);
+        $this->controller->update();
+    }
+
+    public function testUpdateWithInvalidParentId(): void
+    {
+        $this->setupTest('invalidParentId', 'validToken', $this->validData, $this->validChildId);
+        $this->opinion->expects($this->once())->method('update')
+            ->with('invalidParentId', $this->validChildId, 'validToken')
+            ->willThrowException(new InvalidIdException());
+        $this->view->expects($this->once())->method('send')
+            ->with('404', ['error' => 'Resource not found']);
+        $this->controller->update();
+    }
+
+    public function testUpdateWithInvalidChildId(): void
+    {
+        $this->setupTest($this->validParentId, 'validToken', $this->validData, false);
+        $this->view->expects($this->once())->method('send')
+            ->with('400', ['error' => 'Invalid ID']);
+        $this->controller->update();
+    }
+
+    public function testUpdateWithInvalidData(): void
+    {
         $data = [
-            'opinion' => 'Updated Opinion'
+            'comment' => 'Test Opinion'
         ];
         $this->setupTest($this->validParentId, 'validToken', $data, $this->validChildId);
         $this->opinion->expects($this->once())->method('update')
             ->with($this->validParentId, $this->validChildId, 'validToken', $data)
-            ->willReturn(true);
+            ->willThrowException(new InvalidDataException());
         $this->view->expects($this->once())->method('send')
-            ->with('200', ['message' => "Done, opinion updated successfully"]);
+            ->with('400', ['error' => 'Invalid input data']);
         $this->controller->update();
     }
 
