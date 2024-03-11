@@ -104,6 +104,23 @@ class OpinionControllerTest extends BaseControllerTestSetUp
         $this->controller->read();
     }
 
+    public function testReadWithInvalidChildId(): void
+    {
+        $this->setupTest($this->validParentId, childId: false);
+        $this->view->expects($this->once())->method('send')
+            ->with('400', ['error' => 'Invalid ID']);
+        $this->controller->read();
+    }
+
+    public function testReadIndexEmpty(): void
+    {
+        $this->setupTest($this->validParentId);
+        $this->opinion->expects($this->once())->method('index')->willReturn([]);
+        $this->view->expects($this->once())->method('send')
+            ->with('404', ['error' => 'No records']);
+        $this->controller->read();
+    }
+
     public function testReadShow(): void
     {
         $id = rand(1, 100);
@@ -120,6 +137,15 @@ class OpinionControllerTest extends BaseControllerTestSetUp
         $this->setupTest($this->validParentId, childId: $this->validChildId);
         $this->opinion->expects($this->once())->method('show')->willReturn($data);
         $this->view->expects($this->once())->method('send')->with('200', $data);
+        $this->controller->read();
+    }
+
+    public function testReadShowEmpty(): void
+    {
+        $this->setupTest($this->validParentId, childId: 'unexistedChildId');
+        $this->opinion->expects($this->once())->method('show')->willReturn(false);
+        $this->view->expects($this->once())->method('send')
+            ->with('404', ['error' => 'No record with such ID']);
         $this->controller->read();
     }
 
