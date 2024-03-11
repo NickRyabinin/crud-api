@@ -17,8 +17,12 @@ class BaseControllerTestSetUp extends TestCase
         $this->helper = $this->createMock(Helper::class);
     }
 
-    protected function setupTest(string $id, string $token = '', array $inputData = [], string $childId = ''): void
-    {
+    protected function setupTest(
+        string $id,
+        string $token = '',
+        array $inputData = [],
+        string | bool $childId = ''
+    ): void {
         $this->helper->method('getId')->willReturnMap([
             ['', $id],
             ['nested', $childId],
