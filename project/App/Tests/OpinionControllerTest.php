@@ -30,7 +30,6 @@ class OpinionControllerTest extends BaseControllerTestSetUp
 
     public function testCreate(): void
     {
-        // $this->opinion->belongsTo = ['book'];
         $this->setupTest($this->validParentId, 'validToken', $this->validData, '');
         $this->opinion->expects($this->once())->method('store')
             ->with($this->validParentId, 'validToken', $this->validData)
@@ -247,7 +246,7 @@ class OpinionControllerTest extends BaseControllerTestSetUp
 
     public function testDeleteWithPDOException(): void
     {
-        $this->setupTest($this->validParentId, 'validToken', childId: $this->validChildId);
+        $this->setupTest($this->validParentId, 'validToken', [], $this->validChildId);
         $this->opinion->expects($this->once())->method('destroy')
             ->with($this->validParentId, $this->validChildId, 'validToken')
             ->willThrowException(new InvalidDataException());
