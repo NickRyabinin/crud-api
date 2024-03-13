@@ -101,6 +101,15 @@ class BookControllerTest extends BaseControllerTestSetUp
         $this->controller->read();
     }
 
+    public function testReadIndexEmpty(): void
+    {
+        $this->setupTest('');
+        $this->book->expects($this->once())->method('index')->willReturn([]);
+        $this->view->expects($this->once())->method('send')
+            ->with('404', ['error' => 'No records']);
+        $this->controller->read();
+    }
+
     public function testReadShow(): void
     {
         $year = rand(1000, 2024);
@@ -117,6 +126,15 @@ class BookControllerTest extends BaseControllerTestSetUp
         $this->setupTest($this->validId);
         $this->book->expects($this->once())->method('show')->willReturn($data);
         $this->view->expects($this->once())->method('send')->with('200', $data);
+        $this->controller->read();
+    }
+
+    public function testReadShowEmpty(): void
+    {
+        $this->setupTest($this->validId);
+        $this->book->expects($this->once())->method('show')->willReturn(false);
+        $this->view->expects($this->once())->method('send')
+            ->with('404', ['error' => 'No record with such ID']);
         $this->controller->read();
     }
 
