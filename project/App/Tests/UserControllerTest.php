@@ -85,6 +85,15 @@ class UserControllerTest extends BaseControllerTestSetUp
         $this->controller->read();
     }
 
+    public function testReadIndexEmpty(): void
+    {
+        $this->setupTest('');
+        $this->user->expects($this->once())->method('index')->willReturn([]);
+        $this->view->expects($this->once())->method('send')
+            ->with('404', ['error' => 'No records']);
+        $this->controller->read();
+    }
+
     public function testReadShow(): void
     {
         $validId = (string)random_int(1, 10);
@@ -101,6 +110,15 @@ class UserControllerTest extends BaseControllerTestSetUp
 
         $this->user->expects($this->once())->method('show')->willReturn($data);
         $this->view->expects($this->once())->method('send')->with('200', $data);
+        $this->controller->read();
+    }
+
+    public function testReadShowEmpty(): void
+    {
+        $this->setupTest((string)random_int(1, 10));
+        $this->user->expects($this->once())->method('show')->willReturn(false);
+        $this->view->expects($this->once())->method('send')
+            ->with('404', ['error' => 'No record with such ID']);
         $this->controller->read();
     }
 
