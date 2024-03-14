@@ -58,7 +58,7 @@ class Opinion extends Model
         $query = "SELECT * FROM {$this->entity}s WHERE book_id = :book_id AND opinion_id = :opinion_id";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':book_id' => $parentId, ':opinion_id' => $childId]);
-        return $stmt->fetch();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function update(string $parentId, string $childId, string $token, array $data): bool

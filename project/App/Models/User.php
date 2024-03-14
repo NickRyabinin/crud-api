@@ -49,7 +49,7 @@ class User extends Model
         $query = "SELECT id, login, created_at FROM {$this->entity}s WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':id' => $id]);
-        return $stmt->fetch();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function destroy(string $token): bool

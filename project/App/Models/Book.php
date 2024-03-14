@@ -32,7 +32,7 @@ class Book extends Model
         $query = "SELECT * FROM {$this->entity}s WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':id' => $id]);
-        return $stmt->fetch();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function store(string $token, array $data): bool
