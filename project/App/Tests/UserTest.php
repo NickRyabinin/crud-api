@@ -6,30 +6,8 @@ use PHPUnit\Framework\TestCase;
 use App\Models\User;
 use App\Core\Exceptions\InvalidDataException;
 
-class UserTest extends TestCase
+class UserTest extends BaseModelTestSetUp
 {
-    protected $pdo;
-
-    protected function setUp(): void
-    {
-        $this->pdo = new \PDO('sqlite::memory:');
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $this->pdo->exec(
-            'CREATE TABLE users (
-                id INTEGER PRIMARY KEY,
-                login TEXT,
-                email TEXT,
-                hashed_token TEXT,
-                created_at DATE)'
-        );
-    }
-
-    protected function tearDown(): void
-    {
-        $this->pdo->exec('DROP TABLE users');
-        $this->pdo = null;
-    }
-
     public function testIndex()
     {
         $data = [
@@ -46,8 +24,7 @@ class UserTest extends TestCase
                 VALUES ('{$user['login']}', '{$user['created_at']}')"
             );
         }
-        $user = new User($this->pdo);
-        $result = $user->index();
+        $result = $this->user->index();
 
         $this->assertEquals($data, $result);
     }
@@ -59,16 +36,14 @@ class UserTest extends TestCase
             "INSERT INTO users (login, created_at)
             VALUES ('{$userData['login']}', '{$userData['created_at']}')"
         );
-        $user = new User($this->pdo);
-        $result = $user->show(1);
+        $result = $this->user->show(1);
 
         $this->assertEquals($userData, $result);
     }
 
     public function testShowUserDoesNotExistWithSuchID()
     {
-        $user = new User($this->pdo);
-        $result = $user->show(11);
+        $result = $this->user->show(11);
 
         $this->assertFalse($result);
     }
