@@ -4,20 +4,16 @@ namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
 use App\Models\User;
-use App\Core\Exceptions\InvalidDataException;
+use App\Core\Exceptions\InvalidTokenException;
 
 class UserTest extends BaseModelTestSetUp
 {
-    public function testIndex()
+    public function testIndex(): void
     {
         $data = [
             ['id' => 1, 'login' => 'User 1', 'created_at' => '2024-01-01'],
             ['id' => 2, 'login' => 'User 2', 'created_at' => '2024-02-01']
         ];
-        /* $token1 = hash('sha256', $data[0]['email'] . $data[0]['login']);
-        $data[0]['hashed_token'] = $token1;
-        $token2 = hash('sha256', $data[1]['email'] . $data[1]['login']);
-        $data[1]['hashed_token'] = $token2; */
         foreach ($data as $user) {
             $this->pdo->exec(
                 "INSERT INTO users (login, created_at)
@@ -29,7 +25,7 @@ class UserTest extends BaseModelTestSetUp
         $this->assertEquals($data, $result);
     }
 
-    public function testShow()
+    public function testShow(): void
     {
         $userData = ['id' => 1, 'login' => 'User 3', 'created_at' => '2024-03-01'];
         $this->pdo->exec(
@@ -41,10 +37,34 @@ class UserTest extends BaseModelTestSetUp
         $this->assertEquals($userData, $result);
     }
 
-    public function testShowUserDoesNotExistWithSuchID()
+    public function testShowUserDoesNotExistWithSuchID(): void
     {
         $result = $this->user->show(11);
 
         $this->assertFalse($result);
+    }
+
+    public function testStore(): void
+    {
+        $userData = ['login' => 'User 1', 'email' => 'email1@email.net'];
+        $token = hash('sha256', $userData['email'] . $userData['login']);
+        $userData['hashed_token'] = $token;
+        $result = $this->user->store($userData);
+
+        $this->assertTrue($result);
+
+        $stmt = $this->pdo->query('SELECT * FROM users');
+        $insertedUser = $stmt->fetch();
+
+        $this->assertEquals($userData['login'], $insertedUser['login']);
+        $this->assertEquals($userData['email'], $insertedUser['email']);
+        $this->assertEquals($userData['hashed_token'], hash('sha256', $insertedUser['email'] . $insertedUser['login']));
+    }
+
+    public function testDestroyWithInvalidToken(): void
+    {
+        $this->expectException(InvalidTokenException::class);
+
+        $this->user->destroy('invalid_token');
     }
 }
