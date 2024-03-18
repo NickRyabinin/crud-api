@@ -44,10 +44,11 @@ class BookTest extends BaseModelTestSetUp
         $this->assertFalse($result);
     }
 
-    /* public function testStore(): void
+    public function testStore(): void
     {
+        $token = parent::makeDefaultUser();
         $bookData = ['title' => 'New Book', 'author' => 'Author 1', 'published_at' => '2024-01-01'];
-        $result = $this->book->store('token', $bookData);
+        $result = $this->book->store($token, $bookData);
 
         $this->assertTrue($result);
 
@@ -57,5 +58,5 @@ class BookTest extends BaseModelTestSetUp
         $this->assertEquals($bookData['title'], $insertedBook['title']);
         $this->assertEquals($bookData['author'], $insertedBook['author']);
         $this->assertEquals($bookData['published_at'], $insertedBook['published_at']);
-    } */
+    }
 }
