@@ -44,19 +44,12 @@ class BaseModelTestSetUp extends TestCase
         $this->pdo = null;
     }
 
-    /* protected function setupTest(
-        string $id,
-        string $token = '',
-        array $inputData = [],
-        string | bool $childId = ''
-    ): void {
-        $this->helper->method('getId')->willReturnMap([
-            ['', $id],
-            ['nested', $childId],
-        ]);
-        $this->helper->method('getToken')->willReturn($token);
-        $this->helper->method('getInputData')->willReturn($inputData);
-        $this->helper->method('sanitize')->willReturnArgument(0);
-        $this->helper->method('validate')->willReturnArgument(0);
-    } */
+    protected function makeDefaultUser(): string
+    {
+        $userData = ['login' => 'Default User', 'email' => 'default_email@email.net'];
+        $token = hash('sha256', $userData['email'] . $userData['login']);
+        $userData['hashed_token'] = $token;
+        $this->user->store($userData);
+        return base64_encode($token);
+    }
 }
