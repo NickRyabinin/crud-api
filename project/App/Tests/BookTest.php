@@ -5,6 +5,7 @@ namespace App\Tests;
 use PHPUnit\Framework\TestCase;
 use App\Models\Book;
 use App\Core\Exceptions\InvalidDataException;
+use App\Core\Exceptions\InvalidTokenException;
 
 class BookTest extends BaseModelTestSetUp
 {
@@ -58,5 +59,24 @@ class BookTest extends BaseModelTestSetUp
         $this->assertEquals($bookData['title'], $insertedBook['title']);
         $this->assertEquals($bookData['author'], $insertedBook['author']);
         $this->assertEquals($bookData['published_at'], $insertedBook['published_at']);
+    }
+
+    public function testStoreWithInvalidData(): void
+    {
+        $incompleteData = ['title' => 'New Book'];
+        $token = parent::makeDefaultUser();
+
+        $this->expectException(InvalidDataException::class);
+
+        $this->book->store($token, $incompleteData);
+    }
+
+    public function testStoreWithInvalidToken(): void
+    {
+        $bookData = ['title' => 'New Book', 'author' => 'Author 1', 'published_at' => '2024-01-01'];
+
+        $this->expectException(InvalidTokenException::class);
+
+        $this->book->store('invalid_token', $bookData);
     }
 }
