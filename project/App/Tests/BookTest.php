@@ -79,4 +79,30 @@ class BookTest extends BaseModelTestSetUp
 
         $this->book->store('invalid_token', $bookData);
     }
+
+    public function testUpdate(): void
+    {
+        $token = parent::makeDefaultBook();
+        $id = 1;
+        $bookData = ['title' => 'Updated Book', 'author' => 'Updated Author', 'published_at' => '2024-02-02'];
+        $result = $this->book->update($id, $token, $bookData);
+
+        $this->assertTrue($result);
+
+        $stmt = $this->pdo->query('SELECT * FROM books');
+        $updatedBook = $stmt->fetch();
+
+        $this->assertEquals($bookData['title'], $updatedBook['title']);
+        $this->assertEquals($bookData['author'], $updatedBook['author']);
+        $this->assertEquals($bookData['published_at'], $updatedBook['published_at']);
+    }
+
+    public function testDestroy(): void
+    {
+        $token = parent::makeDefaultBook();
+        $id = 1;
+        $result = $this->book->destroy($id, $token);
+
+        $this->assertTrue($result);
+    }
 }
