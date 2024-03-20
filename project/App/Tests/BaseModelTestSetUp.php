@@ -52,4 +52,12 @@ class BaseModelTestSetUp extends TestCase
         $this->user->store($userData);
         return base64_encode($token);
     }
+
+    protected function makeDefaultBook(): string
+    {
+        $bookData = ['title' => 'New Book', 'author' => 'New Author', 'published_at' => '2024-01-01'];
+        $token = $this->makeDefaultUser();
+        $this->book->store($token, $bookData);
+        return $token;
+    }
 }
