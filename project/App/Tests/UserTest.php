@@ -2,8 +2,6 @@
 
 namespace App\Tests;
 
-use PHPUnit\Framework\TestCase;
-use App\Models\User;
 use App\Core\Exceptions\InvalidTokenException;
 
 class UserTest extends BaseModelTestSetUp
@@ -67,4 +65,17 @@ class UserTest extends BaseModelTestSetUp
 
         $this->user->destroy('invalid_token');
     }
+
+    /* public function testDestroy()
+    {
+        $token = parent::makeDefaultUser();
+        $result = $this->user->destroy($token);
+        $this->assertTrue($result);
+
+        $query = "SELECT * FROM users WHERE hashed_token = '{$token}'";
+        $stmt = $this->pdo->query($query);
+        $deletedUser = $stmt->fetch();
+
+        $this->assertFalse($deletedUser);
+    } */
 }
