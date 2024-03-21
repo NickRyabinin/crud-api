@@ -2,8 +2,6 @@
 
 namespace App\Tests;
 
-use PHPUnit\Framework\TestCase;
-use App\Models\Book;
 use App\Core\Exceptions\InvalidDataException;
 use App\Core\Exceptions\InvalidTokenException;
 
@@ -12,13 +10,19 @@ class BookTest extends BaseModelTestSetUp
     public function testIndex()
     {
         $data = [
-            ['id' => 1, 'title' => 'Book 1', 'author' => 'Author 1', 'published_at' => '2024-01-01'],
-            ['id' => 2, 'title' => 'Book 2', 'author' => 'Author 2', 'published_at' => '2024-02-01']
+            [
+                'id' => 1, 'title' => 'Book 1', 'author' => 'Author 1',
+                'published_at' => '1991', 'created_at' => '2024-01-01'
+            ],
+            [
+                'id' => 2, 'title' => 'Book 2', 'author' => 'Author 2',
+                'published_at' => '2020', 'created_at' => '2024-02-01'
+            ]
         ];
         foreach ($data as $book) {
             $this->pdo->exec(
-                "INSERT INTO books (title, author, published_at)
-                VALUES ('{$book['title']}', '{$book['author']}', '{$book['published_at']}')"
+                "INSERT INTO books (title, author, published_at, created_at)
+                VALUES ('{$book['title']}', '{$book['author']}', '{$book['published_at']}', '{$book['created_at']}')"
             );
         }
         $result = $this->book->index();
@@ -28,10 +32,16 @@ class BookTest extends BaseModelTestSetUp
 
     public function testShow()
     {
-        $bookData = ['id' => 1, 'title' => 'Book 3', 'author' => 'Author 3', 'published_at' => '2024-03-01'];
+        $bookData = [
+            'id' => 1, 'title' => 'Book 3', 'author' => 'Author 3',
+            'published_at' => '1991', 'created_at' => '2024-01-01'
+        ];
         $this->pdo->exec(
-            "INSERT INTO books (title, author, published_at)
-            VALUES ('{$bookData['title']}', '{$bookData['author']}', '{$bookData['published_at']}')"
+            "INSERT INTO books (title, author, published_at, created_at)
+            VALUES (
+                '{$bookData['title']}', '{$bookData['author']}',
+                '{$bookData['published_at']}', '{$bookData['created_at']}'
+            )"
         );
         $result = $this->book->show(1);
 
@@ -48,7 +58,7 @@ class BookTest extends BaseModelTestSetUp
     public function testStore(): void
     {
         $token = parent::makeDefaultUser();
-        $bookData = ['title' => 'New Book', 'author' => 'Author 1', 'published_at' => '2024-01-01'];
+        $bookData = ['title' => 'New Book', 'author' => 'Author 1', 'published_at' => '2024'];
         $result = $this->book->store($token, $bookData);
 
         $this->assertTrue($result);
@@ -73,7 +83,7 @@ class BookTest extends BaseModelTestSetUp
 
     public function testStoreWithInvalidToken(): void
     {
-        $bookData = ['title' => 'New Book', 'author' => 'Author 1', 'published_at' => '2024-01-01'];
+        $bookData = ['title' => 'New Book', 'author' => 'Author 1', 'published_at' => '2024'];
 
         $this->expectException(InvalidTokenException::class);
 
@@ -84,7 +94,7 @@ class BookTest extends BaseModelTestSetUp
     {
         $token = parent::makeDefaultBook();
         $id = 1;
-        $bookData = ['title' => 'Updated Book', 'author' => 'Updated Author', 'published_at' => '2024-02-02'];
+        $bookData = ['title' => 'Updated Book', 'author' => 'Updated Author', 'published_at' => '2024'];
         $result = $this->book->update($id, $token, $bookData);
 
         $this->assertTrue($result);
