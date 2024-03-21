@@ -31,16 +31,29 @@ class BaseModelTestSetUp extends TestCase
                 id INTEGER PRIMARY KEY,
                 title TEXT,
                 author TEXT,
-                published_at DATE)'
+                published_at INTEGER,
+                created_at DATE)'
+        );
+        $this->pdo->exec(
+            'CREATE TABLE opinions (
+                id INTEGER PRIMARY KEY,
+                author_login TEXT,
+                book_id INTEGER,
+                opinion_id INTEGER,
+                opinion TEXT,
+                created_at DATE,
+                FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE)'
         );
         $this->user = new User($this->pdo);
         $this->book = new Book($this->pdo);
+        $this->opinion = new Opinion($this->pdo, $this->book);
     }
 
     protected function tearDown(): void
     {
         $this->pdo->exec('DROP TABLE users');
         $this->pdo->exec('DROP TABLE books');
+        $this->pdo->exec('DROP TABLE opinions');
         $this->pdo = null;
     }
 
@@ -55,7 +68,7 @@ class BaseModelTestSetUp extends TestCase
 
     protected function makeDefaultBook(): string
     {
-        $bookData = ['title' => 'New Book', 'author' => 'New Author', 'published_at' => '2024-01-01'];
+        $bookData = ['title' => 'New Book', 'author' => 'New Author', 'published_at' => '1991'];
         $token = $this->makeDefaultUser();
         $this->book->store($token, $bookData);
         return $token;
