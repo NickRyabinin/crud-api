@@ -45,4 +45,14 @@ class OpinionTest extends BaseModelTestSetUp
 
         $this->opinion->store($parentId, 'invalid_token', $opinionData);
     }
+
+    public function testDestroy(): void
+    {
+        $token = parent::makeDefaultOpinion();
+        $parentId = 1;
+        $childId = 1;
+        $result = $this->opinion->destroy($parentId, $childId, $token);
+
+        $this->assertTrue($result);
+    }
 }
