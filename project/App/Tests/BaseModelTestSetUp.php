@@ -18,32 +18,9 @@ class BaseModelTestSetUp extends TestCase
     {
         $this->pdo = new \PDO('sqlite::memory:');
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $this->pdo->exec(
-            'CREATE TABLE users (
-                id INTEGER PRIMARY KEY,
-                login TEXT,
-                email TEXT,
-                hashed_token TEXT,
-                created_at DATE)'
-        );
-        $this->pdo->exec(
-            'CREATE TABLE books (
-                id INTEGER PRIMARY KEY,
-                title TEXT,
-                author TEXT,
-                published_at INTEGER,
-                created_at DATE)'
-        );
-        $this->pdo->exec(
-            'CREATE TABLE opinions (
-                id INTEGER PRIMARY KEY,
-                author_login TEXT,
-                book_id INTEGER,
-                opinion_id INTEGER,
-                opinion TEXT,
-                created_at DATE,
-                FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE)'
-        );
+
+        $this->makeTables();
+
         $this->user = new User($this->pdo);
         $this->book = new Book($this->pdo);
         $this->opinion = new Opinion($this->pdo, $this->book);
@@ -72,5 +49,38 @@ class BaseModelTestSetUp extends TestCase
         $token = $this->makeDefaultUser();
         $this->book->store($token, $bookData);
         return $token;
+    }
+
+    protected function makeDefaultOpinion(): string
+    {
+        $opinionData = ['opinion' => 'New Opinion'];
+        $token = $this->makeDefaultBook();
+        $parentId = 1;
+        $this->opinion->store($parentId, $token, $opinionData);
+        return $token;
+    }
+
+    private function makeTables(): void
+    {
+        $this->pdo->exec('CREATE TABLE users (
+                id INTEGER PRIMARY KEY,
+                login TEXT,
+                email TEXT,
+                hashed_token TEXT,
+                created_at DATE)');
+        $this->pdo->exec('CREATE TABLE books (
+                id INTEGER PRIMARY KEY,
+                title TEXT,
+                author TEXT,
+                published_at INTEGER,
+                created_at DATE)');
+        $this->pdo->exec('CREATE TABLE opinions (
+                id INTEGER PRIMARY KEY,
+                author_login TEXT,
+                book_id INTEGER,
+                opinion_id INTEGER,
+                opinion TEXT,
+                created_at DATE,
+                FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE)');
     }
 }
