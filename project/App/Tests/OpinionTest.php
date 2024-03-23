@@ -46,6 +46,29 @@ class OpinionTest extends BaseModelTestSetUp
         $this->opinion->store($parentId, 'invalid_token', $opinionData);
     }
 
+    public function testUpdate(): void
+    {
+        $token = parent::makeDefaultOpinion();
+        $parentId = 1;
+        $childId = 1;
+        $opinionData = ['opinion' => 'Updated Opinion'];
+        $result = $this->opinion->update($parentId, $childId, $token, $opinionData);
+
+        $this->assertTrue($result);
+    }
+
+    public function testUpdateWithInvalidData(): void
+    {
+        $token = parent::makeDefaultOpinion();
+        $parentId = 1;
+        $childId = 1;
+        $opinionData = ['comment' => 'Updated Opinion'];
+
+        $this->expectException(InvalidDataException::class);
+
+        $this->opinion->update($parentId, $childId, $token, $opinionData);
+    }
+
     public function testDestroy(): void
     {
         $token = parent::makeDefaultOpinion();
