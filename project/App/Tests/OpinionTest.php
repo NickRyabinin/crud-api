@@ -46,6 +46,65 @@ class OpinionTest extends BaseModelTestSetUp
         $this->opinion->store($parentId, 'invalid_token', $opinionData);
     }
 
+    public function testIndex(): void
+    {
+        $bookId = 1;
+        $data = [
+            [
+                'id' => 1,
+                'author_login' => 'User 1',
+                'book_id' => 1,
+                'opinion_id' => 1,
+                'opinion' => 'Opinion 1',
+                'created_at' => '2024-01-01'
+            ],
+            [
+                'id' => 2,
+                'author_login' => 'User 2',
+                'book_id' => 1,
+                'opinion_id' => 2,
+                'opinion' => 'Opinion 2',
+                'created_at' => '2024-02-02'
+            ]
+        ];
+        foreach ($data as $opinion) {
+            $this->pdo->exec(
+                "INSERT INTO opinions (author_login, book_id, opinion_id, opinion, created_at)
+                VALUES (
+                    '{$opinion['author_login']}', '{$opinion['book_id']}', '{$opinion['opinion_id']}',
+                    '{$opinion['opinion']}', '{$opinion['created_at']}'
+            )"
+            );
+        }
+        $result = $this->opinion->index($bookId);
+
+        $this->assertEquals($data, $result);
+    }
+
+    public function testShow(): void
+    {
+        $bookId = 1;
+        $opinionId = 1;
+        $opinionData = [
+            'id' => 1,
+            'author_login' => 'Default User',
+            'book_id' => 1,
+            'opinion_id' => 1,
+            'opinion' => 'New Opinion',
+            'created_at' => '2024-01-01'
+        ];
+        $this->pdo->exec(
+            "INSERT INTO opinions (author_login, book_id, opinion_id, opinion, created_at)
+            VALUES (
+                '{$opinionData['author_login']}', '{$opinionData['book_id']}', '{$opinionData['opinion_id']}',
+                '{$opinionData['opinion']}', '{$opinionData['created_at']}'
+            )"
+        );
+        $result = $this->opinion->show($bookId, $opinionId);
+
+        $this->assertEquals($opinionData, $result);
+    }
+
     public function testUpdate(): void
     {
         $token = parent::makeDefaultOpinion();
