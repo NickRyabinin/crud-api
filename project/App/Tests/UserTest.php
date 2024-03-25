@@ -66,10 +66,11 @@ class UserTest extends BaseModelTestSetUp
         $this->user->destroy('invalid_token');
     }
 
-    /* public function testDestroy()
+    public function testDestroy(): void
     {
         $token = parent::makeDefaultUser();
         $result = $this->user->destroy($token);
+
         $this->assertTrue($result);
 
         $query = "SELECT * FROM users WHERE hashed_token = '{$token}'";
@@ -77,5 +78,5 @@ class UserTest extends BaseModelTestSetUp
         $deletedUser = $stmt->fetch();
 
         $this->assertFalse($deletedUser);
-    } */
+    }
 }
