@@ -51,20 +51,12 @@ class OpinionTest extends BaseModelTestSetUp
         $bookId = 1;
         $data = [
             [
-                'id' => 1,
-                'author_login' => 'User 1',
-                'book_id' => 1,
-                'opinion_id' => 1,
-                'opinion' => 'Opinion 1',
-                'created_at' => '2024-01-01'
+                'id' => 1, 'author_login' => 'User 1', 'book_id' => 1, 'opinion_id' => 1,
+                'opinion' => 'Opinion 1', 'created_at' => '2024-01-01'
             ],
             [
-                'id' => 2,
-                'author_login' => 'User 2',
-                'book_id' => 1,
-                'opinion_id' => 2,
-                'opinion' => 'Opinion 2',
-                'created_at' => '2024-02-02'
+                'id' => 2, 'author_login' => 'User 2', 'book_id' => 1, 'opinion_id' => 2,
+                'opinion' => 'Opinion 2', 'created_at' => '2024-02-02'
             ]
         ];
         foreach ($data as $opinion) {
