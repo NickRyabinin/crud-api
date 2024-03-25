@@ -55,10 +55,11 @@ class User extends Model
     public function destroy(string $token): bool
     {
         parent::checkToken($token);
+        $hashedToken = base64_decode($token);
         $query = "DELETE FROM {$this->entity}s WHERE hashed_token = :hashed_token";
         try {
             $stmt = $this->pdo->prepare($query);
-            $stmt->bindParam(":hashed_token", $$hashedToken);
+            $stmt->bindParam(":hashed_token", $hashedToken);
             $stmt->execute();
         } catch (\PDOException $e) {
             throw new InvalidDataException();
