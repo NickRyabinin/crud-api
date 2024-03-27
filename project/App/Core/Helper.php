@@ -17,10 +17,16 @@ class Helper
         } else {
             $id = $request[1] ?? '';
         }
-        if ($id !== '') {
+        if ($id !== '' && !isset($_GET['page'])) {
             return (preg_match('/^\d+$/', $id)) ? (string)$id : false;
         }
         return '';
+    }
+
+    public function getPage(): string
+    {
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        return (preg_match('/^[1-9]\d*$/', $page)) ? (string)$page : 1;
     }
 
     public function getRequest(): array
