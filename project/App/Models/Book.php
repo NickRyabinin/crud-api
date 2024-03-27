@@ -15,9 +15,10 @@ class Book extends Model
         $this->pdo = $pdo;
     }
 
-    public function index(): array
+    public function index(string $parentId, string $page): array
     {
-        $query = "SELECT * FROM {$this->entity}s";
+        $offset = ((int)$page - 1) * 10;
+        $query = "SELECT * FROM {$this->entity}s LIMIT 10 OFFSET {$offset}";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         $result = [];
@@ -29,7 +30,7 @@ class Book extends Model
 
     public function show(string $id): array | bool
     {
-        $query = "SELECT * FROM {$this->entity}s WHERE id = :id";
+        $query = "SELECT * FROM {$this->entity}s WHERE id = :id ";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);

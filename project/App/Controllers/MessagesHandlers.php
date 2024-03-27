@@ -4,9 +4,9 @@ namespace App\Controllers;
 
 trait MessagesHandlers
 {
-    protected function handleEmptyId(string $parentId = ''): void
+    protected function handleEmptyId(string $parentId = '', string $page = '1'): void
     {
-        $message = $this->model->index($parentId);
+        $message = $this->model->index($parentId, $page);
         if ($message === []) {
             $this->handleNoRecords();
             return;

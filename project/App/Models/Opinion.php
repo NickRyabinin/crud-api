@@ -41,9 +41,10 @@ class Opinion extends Model
         return true;
     }
 
-    public function index(string $parentId): array
+    public function index(string $parentId, string $page): array
     {
-        $query = "SELECT * FROM {$this->entity}s WHERE book_id = :book_id";
+        $offset = ((int)$page - 1) * 10;
+        $query = "SELECT * FROM {$this->entity}s WHERE book_id = :book_id LIMIT 10 OFFSET {$offset}";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':book_id' => $parentId]);
         $result = [];

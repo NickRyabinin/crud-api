@@ -44,9 +44,10 @@ class OpinionController extends Controller
 
     public function read(): void
     {
+        $page = $this->helper->getPage();
         [$parentId, $childId] = $this->getParams();
         match ($childId) {
-            '' => parent::handleEmptyId($parentId),
+            '' => parent::handleEmptyId($parentId, $page),
             false => parent::handleInvalidId(),
             default => parent::handleValidId($parentId, $childId)
         };

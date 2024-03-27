@@ -32,9 +32,10 @@ class User extends Model
         return true;
     }
 
-    public function index(): array
+    public function index(string $parentId, string $page): array
     {
-        $query = "SELECT id, login, created_at FROM {$this->entity}s";
+        $offset = ((int)$page - 1) * 10;
+        $query = "SELECT id, login, created_at FROM {$this->entity}s LIMIT 10 OFFSET {$offset}";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         $result = [];
