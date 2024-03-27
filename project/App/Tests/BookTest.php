@@ -25,7 +25,7 @@ class BookTest extends BaseModelTestSetUp
                 VALUES ('{$book['title']}', '{$book['author']}', '{$book['published_at']}', '{$book['created_at']}')"
             );
         }
-        $result = $this->book->index();
+        $result = $this->book->index('', 1);
 
         $this->assertEquals($data, $result);
     }

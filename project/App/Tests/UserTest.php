@@ -18,7 +18,7 @@ class UserTest extends BaseModelTestSetUp
                 VALUES ('{$user['login']}', '{$user['created_at']}')"
             );
         }
-        $result = $this->user->index();
+        $result = $this->user->index('', 1);
 
         $this->assertEquals($data, $result);
     }

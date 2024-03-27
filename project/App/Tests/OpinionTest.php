@@ -68,7 +68,7 @@ class OpinionTest extends BaseModelTestSetUp
             )"
             );
         }
-        $result = $this->opinion->index($bookId);
+        $result = $this->opinion->index($bookId, 1);
 
         $this->assertEquals($data, $result);
     }
