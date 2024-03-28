@@ -13,11 +13,11 @@ class Helper
     {
         $request = $this->getRequest();
         if ($nested) {
-            $id = $request[3] ?? '';
+            $id = isset($_GET['page']) ? '' : $request[3] ?? '';
         } else {
-            $id = $request[1] ?? '';
+            $id = isset($_GET['page']) && !isset($request[3]) ? '' : $request[1] ?? '';
         }
-        if ($id !== '' && !isset($_GET['page'])) {
+        if ($id !== '') {
             return (preg_match('/^\d+$/', $id)) ? (string)$id : false;
         }
         return '';
