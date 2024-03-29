@@ -12,9 +12,11 @@
 </head>
 
 <body class="bg-green">
+  <div class="container">
   <section class="text-white">
     <article class="content">
-      <h3>Сущность "user":</h3>
+      <h2>REST-like CRUD API сущностей 'user', 'book' и сущности 'opinion', связанной с 'book' отношением many-to-one</h2>
+      <h3>Эндпойнты для сущности "user":</h3>
       <p><h4>POST /users/</h4> - CREATE</p>
       <p>'Регистрация' пользователя - в ответ пользователь получает token, который требуется указывать в заголовке
 
@@ -22,7 +24,7 @@
   Authorization: Bearer {token}
   </pre>
 
-      при последующих обращениях к API (кроме GET запросов) для авторизации действий пользователя.</p>
+      при любых последующих обращениях к API (кроме GET запросов) для авторизации действий пользователя.</p>
       <pre>
   BODY - JSON {
                   "login": login,
@@ -30,7 +32,12 @@
               }
   </pre>
       <p>Все поля в BODY являются обязательными.</p>
-      <p><h4>GET /users/</h4> - READ</p>
+      <p>
+        <h4>GET /users/<span class="text-italic">{?page=pageNumber}</span></h4> - READ
+        <br>
+        <br>
+        (Пагинация всех сущностей при выводе проводится группами по 10, поэтому для их просмотра можно указывать параметр строки запроса 'page')
+      </p>
       <p><h4>GET /users/<span class="text-italic">{id}</span></h4> - READ <span class="text-italic">{id}</span></p>
       <p><h4>PUT | PATCH /users/<span class="text-italic">{id}</span></h4> - method not allowed</p>
       <p><h4>DELETE /users/</h4> - DELETE</p>
@@ -38,7 +45,7 @@
     </article>
     <hr>
     <article class="content">
-      <h3>Сущность "book":</h3>
+      <h3>Эндпойнты для сущности "book":</h3>
       <p><h4>POST /books/</h4> - CREATE</p>
       <pre>
   BODY - JSON {
@@ -48,7 +55,7 @@
               }
   </pre>
       <p>Все поля в BODY являются обязательными.</p>
-      <p><h4>GET /books/</h4> - READ</p>
+      <p><h4>GET /books/<span class="text-italic">{?page=pageNumber}</span></h4> - READ</p>
       <p><h4>GET /books/<span class="text-italic">{id}</span></h4> - READ <span class="text-italic">{id}</span></p>
       <p><h4>PUT | PATCH /books/<span class="text-italic">{id}</span></h4> - UPDATE</p>
       <pre>
@@ -65,7 +72,7 @@
     </article>
     <hr>
     <article class="content">
-      <h3>Сущность "opinion", связанная с сущностью "book":</h3>
+      <h3>Эндпойнты для сущности "opinion", связанной с сущностью "book":</h3>
       <p><h4>POST /books/<span class="text-italic">{book_id}</span>/opinions/</h4> - CREATE</p>
       <pre>
   BODY - JSON {
@@ -73,7 +80,7 @@
               }
   </pre>
       <p>Поле "opinion" является обязательным.</p>
-      <p><h4>GET /books/<span class="text-italic">{book_id}</span>/opinions/</h4> - READ</p>
+      <p><h4>GET /books/<span class="text-italic">{book_id}</span>/opinions/<span class="text-italic">{?page=pageNumber}</span></h4> - READ</p>
       <p>
         <h4>GET /books/<span class="text-italic">{book_id}</span>/opinions/<span class="text-italic">{opinion_id}</span>
         </h4> - READ <span class="text-italic">{opinion_id}</span>
@@ -96,6 +103,7 @@
       <p>Параметры "book_id" и "opinion_id" являются обязательными.</p>
     </article>
   </section>
+</div>
 </body>
 
 </html>
