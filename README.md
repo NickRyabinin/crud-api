@@ -5,9 +5,7 @@
 
 ## CRUD API на  чистом PHP
 
-Попытка в REST-like CRUD API по паттерну MVC в парадигме ООП :-)
-
-Пока реализован pre-MVP для сущностей 'user', 'book' и сущности 'opinion', связанной с 'book' отношением many-to-one.
+REST-like CRUD API по паттерну MVC в парадигме ООП для сущностей 'user', 'book' и сущности 'opinion', связанной с 'book' отношением many-to-one.
 
 Посмотреть, что получается, можно [тут](http://php-crud-api.alwaysdata.net/).
 
@@ -21,7 +19,7 @@
   Authorization: Bearer {token}
   </pre>
 
-при последующих обращениях к API (кроме GET запросов) для авторизации действий пользователя.
+при любых последующих обращениях к API (кроме GET запросов) для авторизации действий пользователя.
 
   <pre>
   BODY - JSON {
@@ -33,7 +31,9 @@
 Все поля в BODY являются обязательными.
 
 
-#### GET /users/ - READ
+#### GET /users/*{?page=pageNumber}* - READ
+
+(Пагинация всех сущностей при выводе проводится группами по 10, поэтому для их просмотра можно указывать параметр строки запроса 'page')
 
 
 #### GET /users/*{id}* - READ *{id}*
@@ -60,7 +60,7 @@
 
 Все поля в BODY являются обязательными.
 
-#### GET /books/ - READ
+#### GET /books/*{?page=pageNumber}* - READ
 
 
 #### GET /books/*{id}* - READ *{id}*
@@ -96,7 +96,7 @@
 
 Поле "opinion" является обязательным.
 
-#### GET /books/*{book_id}*/opinions/ - READ
+#### GET /books/*{book_id}*/opinions/*{?page=pageNumber}* - READ
 
 
 #### GET /books/*{book_id}*/opinions/*{opinion_id}* - READ *{opinion_id}*
