@@ -7,7 +7,8 @@ use App\Core\Exceptions\InvalidDataException;
 class User extends Model
 {
     public string $entity = 'user';
-    protected array $properties = ['login', 'email', 'hashed_token'];
+    protected array $fillableProperties = ['login', 'email', 'hashed_token'];
+    protected array $viewableProperties = ['id', 'login', 'created_at'];
     protected \PDO $pdo;
 
     public function __construct(\PDO $pdo)
@@ -17,7 +18,7 @@ class User extends Model
 
     public function store(array $data): bool
     {
-        parent::compare($this->properties, $data);
+        parent::compare($this->fillableProperties, $data);
         $query = "INSERT INTO {$this->entity}s (login, email, hashed_token)
                     VALUES (:login, :email, :hashed_token)";
         try {
@@ -30,27 +31,6 @@ class User extends Model
             throw new InvalidDataException();
         }
         return true;
-    }
-
-    public function index(string $parentId, string $page): array
-    {
-        $offset = ((int)$page - 1) * 10;
-        $query = "SELECT id, login, created_at FROM {$this->entity}s LIMIT 10 OFFSET {$offset}";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
-        $result = [];
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result[] = $row;
-        }
-        return $result;
-    }
-
-    public function show(string $id): array | bool
-    {
-        $query = "SELECT id, login, created_at FROM {$this->entity}s WHERE id = :id";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute([':id' => $id]);
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function destroy(string $token): bool

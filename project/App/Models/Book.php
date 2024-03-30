@@ -7,7 +7,8 @@ use App\Core\Exceptions\InvalidDataException;
 class Book extends Model
 {
     public string $entity = 'book';
-    protected array $properties = ['title', 'author', 'published_at'];
+    protected array $fillableProperties = ['title', 'author', 'published_at'];
+    protected array $viewableProperties = ['id', 'title', 'author', 'published_at', 'created_at'];
     protected \PDO $pdo;
 
     public function __construct(\PDO $pdo)
@@ -15,30 +16,9 @@ class Book extends Model
         $this->pdo = $pdo;
     }
 
-    public function index(string $parentId, string $page): array
-    {
-        $offset = ((int)$page - 1) * 10;
-        $query = "SELECT * FROM {$this->entity}s LIMIT 10 OFFSET {$offset}";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
-        $result = [];
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result[] = $row;
-        }
-        return $result;
-    }
-
-    public function show(string $id): array | bool
-    {
-        $query = "SELECT * FROM {$this->entity}s WHERE id = :id ";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute([':id' => $id]);
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
-    }
-
     public function store(string $token, array $data): bool
     {
-        parent::compare($this->properties, $data);
+        parent::compare($this->fillableProperties, $data);
         parent::checkToken($token);
         $query = "INSERT INTO {$this->entity}s (title, author, published_at)
             VALUES (:title, :author, :published_at)";
@@ -56,7 +36,7 @@ class Book extends Model
 
     public function update(string $id, string $token, array $data): bool
     {
-        $filteredData = array_intersect_key($data, array_flip($this->properties));
+        $filteredData = array_intersect_key($data, array_flip($this->fillableProperties));
         parent::checkId($id);
         parent::checkToken($token);
         if (count($filteredData) === 0) {
