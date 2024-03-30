@@ -54,7 +54,7 @@ class Opinion extends Model
         return $result;
     }
 
-    public function show(string $parentId, string $childId): array | bool
+    public function show(string $parentId, string $childId = ''): array | bool
     {
         $query = "SELECT * FROM {$this->entity}s WHERE book_id = :book_id AND opinion_id = :opinion_id";
         $stmt = $this->pdo->prepare($query);
