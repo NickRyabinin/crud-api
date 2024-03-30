@@ -16,6 +16,29 @@ abstract class Model
         return $this->entity;
     }
 
+    public function index(string $parentId, string $page): array
+    {
+        $offset = ((int)$page - 1) * 10;
+        $columns = implode(' ,', $this->viewableProperties);
+        $query = "SELECT {$columns} FROM {$this->entity}s LIMIT 10 OFFSET {$offset}";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        $result = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result[] = $row;
+        }
+        return $result;
+    }
+
+    public function show(string $parentId, string $childId = ''): array | bool
+    {
+        $columns = implode(' ,', $this->viewableProperties);
+        $query = "SELECT {$columns} FROM {$this->entity}s WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([':id' => $parentId]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
     protected function checkId(string $id): void
     {
         $query = "SELECT EXISTS (SELECT id FROM {$this->entity}s WHERE id = :id) AS isExists";
