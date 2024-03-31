@@ -6,12 +6,12 @@ class Container
 {
     private $services = [];
 
-    public function set($name, $service)
+    public function set(string $name, object $service): void
     {
         $this->services[$name] = $service;
     }
 
-    public function get($name)
+    public function get(string $name): object | bool
     {
         if (isset($this->services[$name])) {
             if (is_callable($this->services[$name])) {
