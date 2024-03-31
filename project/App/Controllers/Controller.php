@@ -7,8 +7,6 @@ abstract class Controller
     use MessagesHandlers;
 
     protected $model;
-    // protected $view;
-    // protected $helper;
 
     public function __construct($model)
     {
