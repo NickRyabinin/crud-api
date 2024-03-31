@@ -103,7 +103,7 @@ trait MessagesHandlers
         $this->view->send($responseCode, $message);
     }
 
-    protected function handleResourceNotFound(): void
+    public function handleResourceNotFound(): void
     {
         $responseCode = '404';
         $message = ['error' => 'Resource not found'];
