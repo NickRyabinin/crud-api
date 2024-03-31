@@ -7,7 +7,7 @@ use App\Core\Container;
 class Router
 {
     private Container $container;
-    private $helper;
+    private object $helper;
 
     public function __construct(Container $container)
     {
@@ -22,13 +22,18 @@ class Router
             $this->container->get('homeController')->index();
             return;
         }
-        $controller = $this->getController($resource);
+        try {
+            $controller = $this->getController($resource);
+        } catch (\Exception $e) {
+            $this->container->get('bookController')->handleResourceNotFound();
+            return;
+        }
         $method = $this->helper->getHttpMethod();
 
         $this->handleRequestMethod($controller, $method);
     }
 
-    private function handleRequestMethod($controller, string $method): void
+    private function handleRequestMethod(object $controller, string $method): void
     {
         match ($method) {
             'GET' => $controller->read(),
@@ -39,13 +44,13 @@ class Router
         };
     }
 
-    private function getController(string $resource)
+    private function getController(string $resource): object
     {
         $controllerName = $this->helper->sanitize(substr($resource, 0, -1)) . 'Controller';
 
         if ($this->container->get($controllerName) !== false) {
             return $this->container->get($controllerName);
         }
-        die("Resource not found");
+        throw new \Exception("Controller for resource '{$resource}' not found", 404);
     }
 }
