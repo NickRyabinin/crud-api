@@ -18,6 +18,7 @@ use App\Controllers\BookController;
 use App\Controllers\UserController;
 use App\Controllers\HomeController;
 use App\Controllers\OpinionController;
+use App\Controllers\ExceptionController;
 use App\Views\View;
 use App\Views\HomeView;
 
@@ -55,6 +56,9 @@ $container->set('opinionController', new OpinionController(
     $container->get('opinion'),
     $container->get('View'),
     $container->get('helper')
+));
+$container->set('exceptionController', new ExceptionController(
+    $container->get('View')
 ));
 
 $router = new Router($container);
