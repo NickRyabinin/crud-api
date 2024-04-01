@@ -25,7 +25,7 @@ class Router
         try {
             $controller = $this->getController($resource);
         } catch (\Exception $e) {
-            $this->container->get('bookController')->handleResourceNotFound();
+            $this->container->get('exceptionController')->handleException($e);
             return;
         }
         $method = $this->helper->getHttpMethod();
