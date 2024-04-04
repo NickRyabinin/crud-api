@@ -1,6 +1,10 @@
 <?php
 
-namespace App\Views;
+/**
+ * Класс View формирует JSON и выводит его клиенту.
+ */
+
+ namespace App\Views;
 
 class View
 {

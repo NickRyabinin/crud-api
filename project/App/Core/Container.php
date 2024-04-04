@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * DI-контейнер для хранения зависимостей приложения.
+ * (Inspired by "Slim)
+ */
+
 namespace App\Core;
 
 class Container

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Класс HomeView выводит клиенту html-страницу с информацией об
+ * использовании API и доступных эндпойнтах.
+ */
+
 namespace App\Views;
 
 class HomeView
