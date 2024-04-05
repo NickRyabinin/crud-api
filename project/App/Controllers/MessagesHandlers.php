@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Трейт MessagesHandlers - содержит обработчики, передающие во View для вывода пользователю
+ * определённый код ответа и сообщение, в зависимости от логики контроллера, обрабатывающего
+ * действия пользователя.
+ */
+
 namespace App\Controllers;
 
 trait MessagesHandlers
@@ -103,7 +109,7 @@ trait MessagesHandlers
         $this->view->send($responseCode, $message);
     }
 
-    public function handleResourceNotFound(): void
+    protected function handleResourceNotFound(): void
     {
         $responseCode = '404';
         $message = ['error' => 'Resource not found'];

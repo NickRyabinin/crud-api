@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Класс Opinion - модель сущности 'Opinion', связанной с сущностью 'Book'
+ * отношением many-to-one.
+ */
+
 namespace App\Models;
 
 use App\Core\Exceptions\InvalidDataException;
@@ -25,7 +30,7 @@ class Opinion extends Model
         $this->book->checkId($parentId);
         parent::compare($this->fillableProperties, $data);
         $data['book_id'] = $parentId;
-        $data['author_login'] = parent::get('user', 'login', 'token', $token);
+        $data['author_login'] = parent::getValue('user', 'login', 'token', $token);
         $data['opinion_id'] = $this->getMaxChildId($parentId) + 1;
         $query = "INSERT INTO {$this->entity}s (opinion, book_id, author_login, opinion_id)
             VALUES (:opinion, :book_id, :author_login, :opinion_id)";
@@ -71,7 +76,7 @@ class Opinion extends Model
         if (count($filteredData) === 0) {
             throw new InvalidDataException();
         }
-        $filteredData['author_login'] = parent::get('user', 'login', 'token', $token);
+        $filteredData['author_login'] = parent::getValue('user', 'login', 'token', $token);
         $query = "UPDATE {$this->entity}s SET";
         foreach ($filteredData as $key => $value) {
             $query = $query . " {$key} = :{$key},";

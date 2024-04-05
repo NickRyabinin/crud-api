@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Абстрактный класс Model - родительский класс для моделей сущностей.
+ * Модели коммуницируют с Базой данных.
+ *
+ * @todo выделить в наследники минимум два абстрактных класса, от которых будут
+ * наследоваться соответственно модели связанных (nested) и одиночных (single)
+ * сущностей. Это позволит вынести общие методы соответствующих наследников в
+ * родительские классы и с лёгкостью вводить новые сущности.
+ */
+
 namespace App\Models;
 
 use App\Core\Exceptions\InvalidIdException;
@@ -67,7 +77,7 @@ abstract class Model
         };
     }
 
-    protected function get(string $model, string $field, string $conditionKey, string $conditionValue)
+    protected function getValue(string $model, string $field, string $conditionKey, string $conditionValue): mixed
     {
         if ($conditionKey === 'token') {
             $conditionKey = 'hashed_token';
