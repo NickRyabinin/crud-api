@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Класс User - модель сущности 'User'.
+ * Коммуницирует с БД, выполняя стандартные CRUD-операции.
+ */
+
 namespace App\Models;
 
 use App\Core\Exceptions\InvalidDataException;

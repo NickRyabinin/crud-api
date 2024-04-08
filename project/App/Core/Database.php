@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Класс Database - singleton класс для подключения к БД через PDO.
+ * Параметры подключения берёт из переменной окружения DATABASE_URL
+ * вида pdoDBType://user:password@host:port/dbName
+ */
+
 namespace App\Core;
 
 use PDO;

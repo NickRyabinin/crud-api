@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Класс Book - модель сущности 'Book'.
+ * Коммуницирует с БД, выполняя стандартные CRUD-операции.
+ */
+
 namespace App\Models;
 
 use App\Core\Exceptions\InvalidDataException;
