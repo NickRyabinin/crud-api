@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Класс HomeController - контроллер "домашней страницы", имеет единственный
+ * метод index(), вызывающий на View рендер страницы index.html.
+ */
+
 namespace App\Controllers;
 
 use App\Views\HomeView;
@@ -13,7 +18,7 @@ class HomeController
         $this->view = $view;
     }
 
-    public function index()
+    public function index(): void
     {
         $this->view->render();
     }

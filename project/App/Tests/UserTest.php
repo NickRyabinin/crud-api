@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Класс UserTest - unit-тесты модели "User".
+ */
+
 namespace App\Tests;
 
 use App\Core\Exceptions\InvalidTokenException;

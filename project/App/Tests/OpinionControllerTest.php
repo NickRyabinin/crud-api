@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Класс OpinionControllerTest - unit-тесты контроллера "OpinionController".
+ */
+
 namespace App\Tests;
 
 use App\Controllers\OpinionController;

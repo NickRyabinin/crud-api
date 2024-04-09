@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Класс UserControllerTest - unit-тесты контроллера "UserController".
+ */
+
 namespace App\Tests;
 
 use App\Controllers\UserController;

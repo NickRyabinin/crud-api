@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Класс BookControllerTest - unit-тесты контроллера "BookController".
+ */
+
 namespace App\Tests;
 
 use App\Controllers\BookController;

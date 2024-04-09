@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Класс BookTest - unit-тесты модели "Book".
+ */
+
 namespace App\Tests;
 
 use App\Core\Exceptions\InvalidDataException;
@@ -7,7 +11,7 @@ use App\Core\Exceptions\InvalidTokenException;
 
 class BookTest extends BaseModelTestSetUp
 {
-    public function testIndex()
+    public function testIndex(): void
     {
         $data = [
             [
@@ -30,7 +34,7 @@ class BookTest extends BaseModelTestSetUp
         $this->assertEquals($data, $result);
     }
 
-    public function testShow()
+    public function testShow(): void
     {
         $bookData = [
             'id' => 1, 'title' => 'Book 3', 'author' => 'Author 3',
@@ -48,7 +52,7 @@ class BookTest extends BaseModelTestSetUp
         $this->assertEquals($bookData, $result);
     }
 
-    public function testShowBookDoesNotExistWithSuchID()
+    public function testShowBookDoesNotExistWithSuchID(): void
     {
         $result = $this->book->show(11);
 

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Класс HomeControllerTest - unit-тесты контроллера "HomeController".
+ */
+
 namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Класс OpinionTest - unit-тесты модели "Opinion".
+ */
+
 namespace App\Tests;
 
 use App\Core\Exceptions\InvalidDataException;

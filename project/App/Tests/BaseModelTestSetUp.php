@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Класс BaseModelTestSetUp - класс-родитель для unit-тестов моделей.
+ * Выполняет первичную инициализацию тестов.
+ */
+
 namespace App\Tests;
 
 use App\Models\User;

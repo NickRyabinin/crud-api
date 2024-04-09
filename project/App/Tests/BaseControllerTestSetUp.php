@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Класс BaseControllerTestSetUp - класс-родитель для unit-тестов контроллеров.
+ * Выполняет первичную инициализацию тестов.
+ */
+
 namespace App\Tests;
 
 use App\Core\Helper;
