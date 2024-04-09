@@ -28,7 +28,7 @@ class UserController extends Controller
         $this->helper = $helper;
     }
 
-    public function create()
+    public function create(): void
     {
         $id = $this->helper->getId();
         if ($id !== '') {
@@ -53,9 +53,9 @@ class UserController extends Controller
         }
     }
 
-    public function update()
+    public function update(): void
     {
-        return parent::handleInvalidMethod();
+        parent::handleInvalidMethod();
     }
 
     public function delete(): void
