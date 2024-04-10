@@ -7,7 +7,28 @@
 
 REST-like CRUD API по паттерну MVC в парадигме ООП для сущностей 'user', 'book' и сущности 'opinion', связанной с 'book' отношением many-to-one.
 
-Посмотреть, что получается, можно [тут](http://php-crud-api.alwaysdata.net/).
+Посмотреть задеплоенное приложение можно [тут](http://php-crud-api.alwaysdata.net/).
+
+### Требования:
+ - php >= 8
+
+ - composer - опционально (подтянуть PHPUnit для запуска тестов)
+
+ - MySQL, или иная СУБД, поддерживаемая PDO
+
+ - Apache, или другой web-сервер по желанию
+
+### Локальная установка (пока без Docker):
+```bash
+git clone git@github.com:NickRyabinin/crud-api.git
+```
+ - установить переменную окружения DATABASE_URL вида:
+
+   DATABASE_URL="pdoDBType://user:password@host:port/dbName"
+
+   для подключения к БД
+
+ - настроить веб-сервер на использование единой точки входа index.php
 
 ### Эндпойнты для сущности 'user':
 
