@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 services:
   app:
@@ -11,21 +11,21 @@ services:
       - "8080:80"
     volumes:
       - .:/var/www/html
+      - apache_logs:/var/log/apache2
     environment:
-      - MYSQL_DATABASE=your_database
-      - MYSQL_USER=your_user
-      - MYSQL_PASSWORD=your_password
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
 
   db:
     image: mysql:8.0.36
     container_name: mysql-db
+    command: --default-authentication-plugin=mysql_native_password
     environment:
-      - MYSQL_ROOT_PASSWORD=your_root_password
-      - MYSQL_DATABASE=your_database
-      - MYSQL_USER=your_user
-      - MYSQL_PASSWORD=your_password
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
@@ -33,3 +33,4 @@ services:
 
 volumes:
   db_data:
+  apache_logs:
