@@ -22,9 +22,10 @@ final class Database
     {
     }
 
-    public function connect(string $dbType): PDO
+    public function connect(): PDO
     {
         $databaseUrl = parse_url((string) getenv('DATABASE_URL'));
+        $dbType = $databaseUrl['scheme'] ?? '';
         $username = $databaseUrl['user'] ?? '';
         $password = $databaseUrl['pass'] ?? '';
         $host = $databaseUrl['host'] ?? '';
