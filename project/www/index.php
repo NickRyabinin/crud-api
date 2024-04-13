@@ -41,10 +41,9 @@ use App\Controllers\ExceptionController;
 use App\Views\View;
 use App\Views\HomeView;
 
-const DB_TYPE = 'mysql';
 const MIGRATION_PATH = __DIR__ . "/../App/Database/Migrations/migration.sql";
 
-$pdo = Database::get()->connect(DB_TYPE);
+$pdo = Database::get()->connect();
 Database::get()->migrate($pdo, MIGRATION_PATH);
 
 $container = new Container();
