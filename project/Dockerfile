@@ -1,6 +1,9 @@
 # Используем официальный образ PHP с Apache
 FROM php:8.1-apache
 
+# Устанавливаем необходимую библиотеку 'oniguruma'
+RUN apt-get update && apt-get install -y libonig-dev
+
 # Устанавливаем расширения PHP, которые могут понадобиться
 RUN docker-php-ext-install pdo pdo_mysql mbstring
 
