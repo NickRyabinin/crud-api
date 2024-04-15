@@ -10,6 +10,9 @@ RUN docker-php-ext-install pdo pdo_mysql mbstring
 # Настраиваем Apache для использования mod_rewrite
 RUN a2enmod rewrite
 
+# Перезапускаем сервис Apache2 для применения изменений
+RUN service apache2 restart
+
 # Копируем конфигурацию Apache для настройки единой точки входа
 COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
 
