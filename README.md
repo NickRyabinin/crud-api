@@ -18,7 +18,7 @@ REST-like CRUD API по паттерну MVC в парадигме ООП для
 
  - Apache, или другой web-сервер по желанию
 
-### Локальная установка (пока без Docker):
+### Локальная установка (без Docker):
 ```bash
 git clone git@github.com:NickRyabinin/crud-api.git
 ```
@@ -29,6 +29,20 @@ git clone git@github.com:NickRyabinin/crud-api.git
    для подключения к БД
 
  - настроить веб-сервер на использование единой точки входа index.php
+
+### Локальная установка через Docker (PHP8.1-Apache, MySQL8):
+```bash
+git clone git@github.com:NickRyabinin/crud-api.git
+
+cd crud-api/
+
+make start
+
+mysql://user:password@172.17.0.1:3307/dbName
+```
+(Тут 172.17.0.1 - IP хоста Docker (docker0), 3307 - порт MySQL)
+
+Приложение будет доступно по адресу localhost:9090
 
 ### Эндпойнты для сущности 'user':
 
