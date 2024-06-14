@@ -136,7 +136,7 @@ class BookControllerTest extends BaseControllerTestSetUp
     public function testReadShowEmpty(): void
     {
         $this->setupTest($this->validId);
-        $this->book->expects($this->once())->method('show')->willReturn(false);
+        $this->book->expects($this->once())->method('show')->willReturn([false]);
         $this->view->expects($this->once())->method('send')
             ->with('404', ['error' => 'No record with such ID']);
         $this->controller->read();

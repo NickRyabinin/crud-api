@@ -81,19 +81,19 @@ class OpinionTest extends BaseModelTestSetUp
     {
         $bookId = 1;
         $opinionId = 1;
-        $opinionData = [
+        $opinionData = [[
             'id' => 1,
             'author_login' => 'Default User',
             'book_id' => 1,
             'opinion_id' => 1,
             'opinion' => 'New Opinion',
             'created_at' => '2024-01-01'
-        ];
+        ]];
         $this->pdo->exec(
             "INSERT INTO opinions (author_login, book_id, opinion_id, opinion, created_at)
             VALUES (
-                '{$opinionData['author_login']}', '{$opinionData['book_id']}', '{$opinionData['opinion_id']}',
-                '{$opinionData['opinion']}', '{$opinionData['created_at']}'
+                '{$opinionData[0]['author_login']}', '{$opinionData[0]['book_id']}', '{$opinionData[0]['opinion_id']}',
+                '{$opinionData[0]['opinion']}', '{$opinionData[0]['created_at']}'
             )"
         );
         $result = $this->opinion->show($bookId, $opinionId);

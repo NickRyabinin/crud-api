@@ -120,7 +120,7 @@ class UserControllerTest extends BaseControllerTestSetUp
     public function testReadShowEmpty(): void
     {
         $this->setupTest((string)random_int(1, 10));
-        $this->user->expects($this->once())->method('show')->willReturn(false);
+        $this->user->expects($this->once())->method('show')->willReturn([false]);
         $this->view->expects($this->once())->method('send')
             ->with('404', ['error' => 'No record with such ID']);
         $this->controller->read();
