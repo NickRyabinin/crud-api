@@ -59,12 +59,12 @@ class Opinion extends Model
         return $result;
     }
 
-    public function show(string $parentId, string $childId = ''): array | bool
+    public function show(string $parentId, string $childId = ''): array
     {
         $query = "SELECT * FROM {$this->entity}s WHERE book_id = :book_id AND opinion_id = :opinion_id";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':book_id' => $parentId, ':opinion_id' => $childId]);
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
+        return [$stmt->fetch(\PDO::FETCH_ASSOC)];
     }
 
     public function update(string $parentId, string $childId, string $token, array $data): bool

@@ -40,7 +40,7 @@ abstract class Model
         return $result;
     }
 
-    public function show(string $parentId, string $childId = ''): array | bool
+    public function show(string $parentId, string $childId = ''): array
     {
         $columns = implode(' ,', $this->viewableProperties);
         $query = "SELECT {$columns} FROM {$this->entity}s WHERE id = :id";
