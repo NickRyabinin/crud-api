@@ -29,10 +29,10 @@ class UserTest extends BaseModelTestSetUp
 
     public function testShow(): void
     {
-        $userData = ['id' => 1, 'login' => 'User 3', 'created_at' => '2024-03-01'];
+        $userData = [['id' => 1, 'login' => 'User 3', 'created_at' => '2024-03-01']];
         $this->pdo->exec(
             "INSERT INTO users (login, created_at)
-            VALUES ('{$userData['login']}', '{$userData['created_at']}')"
+            VALUES ('{$userData[0]['login']}', '{$userData[0]['created_at']}')"
         );
         $result = $this->user->show(1);
 
@@ -43,7 +43,7 @@ class UserTest extends BaseModelTestSetUp
     {
         $result = $this->user->show(11);
 
-        $this->assertFalse($result);
+        $this->assertFalse($result[0]);
     }
 
     public function testStore(): void
