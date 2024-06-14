@@ -46,7 +46,7 @@ abstract class Model
         $query = "SELECT {$columns} FROM {$this->entity}s WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':id' => $parentId]);
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
+        return [$stmt->fetch(\PDO::FETCH_ASSOC)];
     }
 
     protected function checkId(string $id): void
