@@ -23,7 +23,7 @@ trait MessagesHandlers
     protected function handleValidId(string $parentId, string $childId = ''): void
     {
         $message = $this->model->show($parentId, $childId);
-        if ($message === false) {
+        if ($message[0] === false) {
             $this->handleNoRecord();
             return;
         }
