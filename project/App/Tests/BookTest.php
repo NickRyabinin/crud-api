@@ -36,15 +36,15 @@ class BookTest extends BaseModelTestSetUp
 
     public function testShow(): void
     {
-        $bookData = [
+        $bookData = [[
             'id' => 1, 'title' => 'Book 3', 'author' => 'Author 3',
             'published_at' => '1991', 'created_at' => '2024-01-01'
-        ];
+        ]];
         $this->pdo->exec(
             "INSERT INTO books (title, author, published_at, created_at)
             VALUES (
-                '{$bookData['title']}', '{$bookData['author']}',
-                '{$bookData['published_at']}', '{$bookData['created_at']}'
+                '{$bookData[0]['title']}', '{$bookData[0]['author']}',
+                '{$bookData[0]['published_at']}', '{$bookData[0]['created_at']}'
             )"
         );
         $result = $this->book->show(1);
@@ -56,7 +56,7 @@ class BookTest extends BaseModelTestSetUp
     {
         $result = $this->book->show(11);
 
-        $this->assertFalse($result);
+        $this->assertFalse($result[0]);
     }
 
     public function testStore(): void
