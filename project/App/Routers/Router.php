@@ -46,7 +46,7 @@ class Router
             'POST' => $controller->create(),
             'PUT', 'PATCH' => $controller->update(),
             'DELETE' => $controller->delete(),
-            'OPTIONS' => $controller->handleOk([]),
+            'OPTIONS' => $controller->handleOptions(),
             default => $controller->handleInvalidMethod()
         };
     }
