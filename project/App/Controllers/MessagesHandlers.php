@@ -118,8 +118,12 @@ trait MessagesHandlers
 
     protected function handleOptions(): void
     {
+        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
+            $requestedMethod = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'];
+        }
+
         header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+        header('Access-Control-Allow-Methods: ' . $requestedMethod);
         header('Access-Control-Allow-Headers: Authorization');
         http_response_code(200);
     }
