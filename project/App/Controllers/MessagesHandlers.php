@@ -118,7 +118,7 @@ trait MessagesHandlers
 
     protected function handleOptions(): void
     {
-        header('Access-Control-Allow-Origin: *');
+        // header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: POST');
         header('Access-Control-Allow-Headers: Authorization');
         header('Access-Control-Max-Age: 86400');
