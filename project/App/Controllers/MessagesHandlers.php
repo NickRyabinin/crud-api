@@ -72,7 +72,7 @@ trait MessagesHandlers
         $this->view->send($responseCode, $message);
     }
 
-    protected function handleOk(array $message): void
+    public function handleOk(array $message): void
     {
         $responseCode = '200';
         $this->view->send($responseCode, $message);
@@ -114,17 +114,5 @@ trait MessagesHandlers
         $responseCode = '404';
         $message = ['error' => 'Resource not found'];
         $this->view->send($responseCode, $message);
-    }
-
-    public function handleOptions(): void
-    {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Authorization');
-        header('Access-Control-Max-Age: 86400');
-        header("Content-Length: 0");
-        header("Content-Type: text/plain");
-        http_response_code(200);
-        die();
     }
 }
