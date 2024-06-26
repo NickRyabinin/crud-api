@@ -74,7 +74,7 @@ class OpinionTest extends BaseModelTestSetUp
         }
         $result = $this->opinion->index($bookId, 1);
 
-        $this->assertEquals($data, $result);
+        $this->assertEquals($data, $result['items']);
     }
 
     public function testShow(): void
