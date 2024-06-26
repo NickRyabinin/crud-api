@@ -13,7 +13,7 @@ trait MessagesHandlers
     protected function handleEmptyId(string $parentId = '', string $page = '1'): void
     {
         $message = $this->model->index($parentId, $page);
-        if ($message === []) {
+        if ($message['items'] === []) {
             $this->handleNoRecords();
             return;
         }
