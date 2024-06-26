@@ -31,7 +31,7 @@ class BookTest extends BaseModelTestSetUp
         }
         $result = $this->book->index('', 1);
 
-        $this->assertEquals($data, $result);
+        $this->assertEquals($data, $result['items']);
     }
 
     public function testShow(): void

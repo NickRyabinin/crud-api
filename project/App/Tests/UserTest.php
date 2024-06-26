@@ -24,7 +24,7 @@ class UserTest extends BaseModelTestSetUp
         }
         $result = $this->user->index('', 1);
 
-        $this->assertEquals($data, $result);
+        $this->assertEquals($data, $result['items']);
     }
 
     public function testShow(): void
