@@ -52,9 +52,14 @@ class Opinion extends Model
         $query = "SELECT * FROM {$this->entity}s WHERE book_id = :book_id LIMIT 10 OFFSET {$offset}";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([':book_id' => $parentId]);
-        $result = [];
+        $result = [
+            'total' => $this->getTotalRecords($parentId),
+            'offset' => $offset,
+            'limit' => 10,
+            'items' => []
+        ];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result[] = $row;
+            $result['items'][] = $row;
         }
         return $result;
     }
@@ -119,5 +124,13 @@ class Opinion extends Model
         $stmt->bindParam(':book_id', $parentId);
         $stmt->execute();
         return $stmt->fetch()['max_opinion_id'];
+    }
+
+    protected function getTotalRecords(string $parentId = ''): int
+    {
+        $query = "SELECT COUNT(*) FROM {$this->entity}s WHERE book_id = :book_id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([':book_id' => $parentId]);
+        return $stmt->fetchColumn();
     }
 }
