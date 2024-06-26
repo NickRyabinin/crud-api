@@ -34,8 +34,14 @@ abstract class Model
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         $result = [];
+        $result = [
+            'total' => $this->getTotalRecords(),
+            'offset' => $offset,
+            'limit' => 10,
+            'items' => []
+        ];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result[] = $row;
+            $result['items'][] = $row;
         }
         return $result;
     }
@@ -91,5 +97,13 @@ abstract class Model
             throw new InvalidDataException();
         }
         return $stmt->fetch(\PDO::FETCH_ASSOC)['result'];
+    }
+
+    protected function getTotalRecords(): int
+    {
+        $query = "SELECT COUNT(*) FROM {$this->entity}s";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchColumn();
     }
 }
