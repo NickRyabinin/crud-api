@@ -33,7 +33,6 @@ abstract class Model
         $query = "SELECT {$columns} FROM {$this->entity}s LIMIT 10 OFFSET {$offset}";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
-        $result = [];
         $result = [
             'total' => $this->getTotalRecords(),
             'offset' => $offset,
@@ -99,7 +98,7 @@ abstract class Model
         return $stmt->fetch(\PDO::FETCH_ASSOC)['result'];
     }
 
-    protected function getTotalRecords(): int
+    protected function getTotalRecords(string $parentId = ''): int
     {
         $query = "SELECT COUNT(*) FROM {$this->entity}s";
         $stmt = $this->pdo->prepare($query);
