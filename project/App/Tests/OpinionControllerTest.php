@@ -85,7 +85,7 @@ class OpinionControllerTest extends BaseControllerTestSetUp
         $date1 = date('YYYY-MM-DD HH:MM:SS', strtotime('-1 day'));
         $id2 = rand(1, 100);
         $date2 = date('YYYY-MM-DD HH:MM:SS');
-        $data = [
+        $data = ['items' =>
             [
                 'id' => $id1,
                 'author_login' => 'Incognito Anonymous',
@@ -118,7 +118,7 @@ class OpinionControllerTest extends BaseControllerTestSetUp
     public function testReadIndexEmpty(): void
     {
         $this->setupTest($this->validParentId);
-        $this->opinion->expects($this->once())->method('index')->willReturn([]);
+        $this->opinion->expects($this->once())->method('index')->willReturn(['items' => []]);
         $this->view->expects($this->once())->method('send')
             ->with('404', ['error' => 'No records']);
         $this->controller->read();

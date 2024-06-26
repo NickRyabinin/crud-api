@@ -83,7 +83,7 @@ class BookControllerTest extends BaseControllerTestSetUp
         $year2 = rand(1000, 2024);
         $date1 = date('YYYY-MM-DD HH:MM:SS');
         $date2 = date('YYYY-MM-DD HH:MM:SS');
-        $data = [
+        $data = ['items' =>
             [
                 'id' => 1,
                 'title' => 'Title 1',
@@ -108,7 +108,7 @@ class BookControllerTest extends BaseControllerTestSetUp
     public function testReadIndexEmpty(): void
     {
         $this->setupTest('');
-        $this->book->expects($this->once())->method('index')->willReturn([]);
+        $this->book->expects($this->once())->method('index')->willReturn(['items' => []]);
         $this->view->expects($this->once())->method('send')
             ->with('404', ['error' => 'No records']);
         $this->controller->read();

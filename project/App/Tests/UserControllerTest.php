@@ -69,7 +69,7 @@ class UserControllerTest extends BaseControllerTestSetUp
     {
         $date1 = date('YYYY-MM-DD HH:MM:SS');
         $date2 = date('YYYY-MM-DD HH:MM:SS');
-        $data = [
+        $data = ['items' =>
             [
                 'id' => 1,
                 'login' => 'Test Login 1',
@@ -92,7 +92,7 @@ class UserControllerTest extends BaseControllerTestSetUp
     public function testReadIndexEmpty(): void
     {
         $this->setupTest('');
-        $this->user->expects($this->once())->method('index')->willReturn([]);
+        $this->user->expects($this->once())->method('index')->willReturn(['items' => []]);
         $this->view->expects($this->once())->method('send')
             ->with('404', ['error' => 'No records']);
         $this->controller->read();
