@@ -38,7 +38,7 @@ class UserController extends Controller
         $inputData = $this->helper->getInputData();
         $cleanData = array_map(fn ($param) => $this->helper->sanitize($this->helper->validate($param)), $inputData);
         $login = $cleanData['login'] ?? '';
-        $email = $cleanData['email'] ?? '';
+        $email = filter_var($cleanData['email'] ?? '', FILTER_VALIDATE_EMAIL);
         if (!($login && $email)) {
             parent::handleInvalidData();
             return;
