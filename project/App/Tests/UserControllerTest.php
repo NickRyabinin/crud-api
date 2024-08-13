@@ -26,7 +26,7 @@ class UserControllerTest extends BaseControllerTestSetUp
 
     public function testCreate(): void
     {
-        $data = ['login' => 'Test Login', 'email' => 'Test@Email'];
+        $data = ['login' => 'Test Login', 'email' => 'Test@Email.com'];
         extract($data);
         $token = hash('sha256', $email . $login);
 
@@ -47,7 +47,7 @@ class UserControllerTest extends BaseControllerTestSetUp
 
     public function testCreateWithInvalidData(): void
     {
-        $data = ['login' => 'Test Login', 'email' => 'NotUnique@Email'];
+        $data = ['login' => 'Test Login', 'email' => 'NotUnique@Email.com'];
         extract($data);
         $token = hash('sha256', $email . $login);
 
