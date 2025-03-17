@@ -7,7 +7,7 @@
 
 REST-like CRUD API по паттерну MVC в парадигме ООП для сущностей 'user', 'book' и сущности 'opinion', связанной с 'book' отношением many-to-one.
 
-Посмотреть задеплоенное приложение можно [тут](http://php-crud-api.alwaysdata.net/).
+Посмотреть задеплоенное приложение можно [тут](https://php-crud-api.alwaysdata.net/).
 
 ### Требования:
  - php >= 8
